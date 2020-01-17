@@ -1,0 +1,45 @@
+﻿@inject IJSRuntime JS
+
+<div @ref="monacoContainer" class="monaco-editor-container" />
+
+@code
+{
+  private ElementReference monacoContainer;
+
+  [Parameter]
+  public string Code { get; set; }
+
+  private string internalId;
+  private bool editorLoaded;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+      if (firstRender)
+      {
+          Console.WriteLine("First Render");
+
+          internalId = Guid.NewGuid().ToString();
+          await JS.InvokeVoidAsync("monacoInterop.initialiseEditor", internalId, monacoContainer);
+                    
+          Console.WriteLine("monacoInterop.initialiseEditor complete");
+
+          editorLoaded = true;
+
+          if (Code is object)
+          {
+              Console.WriteLine("Invoking monacoInterop.setContent");
+              await JS.InvokeVoidAsync("monacoInterop.setContent", internalId, Code);
+          }
+      }
+  }
+
+  protected override async Task OnParametersSetAsync()
+  {
+      Console.WriteLine("Parameter Set");
+      if (editorLoaded)
+      {          
+          Console.WriteLine("Setting Content");
+          await JS.InvokeVoidAsync("monacoInterop.setContent", internalId, Code);
+      }
+  }
+}
