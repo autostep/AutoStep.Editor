@@ -1,5 +1,33 @@
 ﻿@page "/"
+@using Store
+@inject IState<AppState> AppState
 
-    <div class="flex-grow-1">
-        <CodeWindow SourceName="testSource" />
-    </div>
+<div class="flex-grow-1">
+    <CodeWindow SourceName="testSource" />
+</div>
+<button @onclick="CompileCode">Compile</button>
+<div>
+    <p>Feature Name: @featureName</p>
+    @foreach (var msg in compileMessages)
+    {
+        <p>@msg</p>
+    }
+</div>
+
+@code {
+
+    string[] compileMessages = new string[0];
+    string featureName;
+
+    async Task CompileCode()
+    {
+        var compiler = new AutoStep.Compiler.AutoStepCompiler();
+
+        var source = new AutoStep.Compiler.StringContentSource(AppState.Value.CodeWindow.CodeBody);
+
+        var result = await compiler.CompileAsync(source);
+
+        compileMessages = result.Messages.Select(x => x.ToString()).ToArray();
+        featureName = result.Output?.Feature?.Name;
+    }
+}

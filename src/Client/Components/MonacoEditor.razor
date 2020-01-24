@@ -4,42 +4,74 @@
 
 @code
 {
-  private ElementReference monacoContainer;
+    private ElementReference monacoContainer;
+    private string initiallyLoadedCode;
 
-  [Parameter]
-  public string Code { get; set; }
+    [Parameter]
+    public string InitialCode
+    {
+        get => initiallyLoadedCode;
+        set
+        {
+            if (initiallyLoadedCode != value)
+            {
+                initiallyLoadedCode = value;
+                UpdateContent();
+            }
+        }
+    }
 
-  private string internalId;
-  private bool editorLoaded;
+    [Parameter]
+    public EventCallback<string> OnCodeChanged { get; set; }
 
-  protected override async Task OnAfterRenderAsync(bool firstRender)
-  {
-      if (firstRender)
-      {
-          Console.WriteLine("First Render");
+    private string internalId;
+    private bool editorLoaded;
+    private MonacoEventTarget eventTarget;
 
-          internalId = Guid.NewGuid().ToString();
-          await JS.InvokeVoidAsync("monacoInterop.initialiseEditor", internalId, monacoContainer);
-                    
-          Console.WriteLine("monacoInterop.initialiseEditor complete");
+    private class MonacoEventTarget
+    {
+        private Action<string> onChange;
 
-          editorLoaded = true;
+        public MonacoEventTarget(Action<string> changeEvent)
+        {
+            onChange = changeEvent;
+        }
 
-          if (Code is object)
-          {
-              Console.WriteLine("Invoking monacoInterop.setContent");
-              await JS.InvokeVoidAsync("monacoInterop.setContent", internalId, Code);
-          }
-      }
-  }
+        [JSInvokable]
+        public void EditorContentChanged(string content)
+        {
+            onChange(content);
+        }
+    }
 
-  protected override async Task OnParametersSetAsync()
-  {
-      Console.WriteLine("Parameter Set");
-      if (editorLoaded)
-      {          
-          Console.WriteLine("Setting Content");
-          await JS.InvokeVoidAsync("monacoInterop.setContent", internalId, Code);
-      }
-  }
+    private void UpdateContent()
+    {
+        if(editorLoaded && InitialCode is object)
+        {
+            Console.WriteLine("Invoking monacoInterop.setContent");
+            JS.InvokeVoidAsync("monacoInterop.setContent", internalId, InitialCode);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Console.WriteLine("First Render");
+
+            internalId = Guid.NewGuid().ToString();
+            eventTarget = new MonacoEventTarget(s =>
+            {
+                OnCodeChanged.InvokeAsync(s);
+            });
+
+            await JS.InvokeVoidAsync("monacoInterop.initialiseEditor", internalId, monacoContainer, DotNetObjectReference.Create(eventTarget));
+
+            Console.WriteLine("monacoInterop.initialiseEditor complete");
+
+            editorLoaded = true;
+
+            UpdateContent();
+        }
+    }
 }

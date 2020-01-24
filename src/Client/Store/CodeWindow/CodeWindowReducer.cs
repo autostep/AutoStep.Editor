@@ -12,8 +12,9 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
         {
             return action switch
             {
-                LoadCodeAction load => new CodeWindowState(state.CodeBody, load.SourceName, true),
-                LoadCodeCompleteAction loaded => new CodeWindowState(loaded.Body, state.SourceName, false),
+                LoadCodeAction load => new CodeWindowState(state.InitialCodeBody, state.CodeBody, load.SourceName, true),
+                LoadCodeCompleteAction loaded => new CodeWindowState(loaded.Body, loaded.Body, state.SourceName, false),
+                CodeChangeAction codeChange => new CodeWindowState(state.InitialCodeBody, codeChange.Body, state.SourceName, state.IsLoading),
 
                 _ => throw new InvalidOperationException("Unexpected reducer")
             };

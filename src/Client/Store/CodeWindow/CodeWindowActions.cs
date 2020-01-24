@@ -5,10 +5,14 @@ using System.Linq;
 
 namespace AutoStep.Editor.Client.Store.CodeWindow
 {
+    public interface IAutoStepAction
+    {
+    }
+
     /// <summary>
     /// <see cref="CodeWindowReducer"/>
     /// </summary>
-    public interface ICodeWindowAction
+    public interface ICodeWindowAction : IAutoStepAction
     {
     }
 
@@ -34,4 +38,15 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
             Body = body;
         }
     }
+
+    public struct CodeChangeAction : ICodeWindowAction
+    {
+        public string Body { get; }
+
+        public CodeChangeAction(string body)
+        {
+            Body = body;
+        }
+    }
+
 }

@@ -7,16 +7,19 @@
 
   <ItemGroup>
     <PackageReference Include="Blazor.Fluxor" Version="1.1.0" />
+    <PackageReference Include="AutoStep" Version="1.0.0-alpha.*" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="3.1.0-preview4.19579.2" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="3.1.0-preview4.19579.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.1.0-preview4.19579.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.1.0-preview4.19579.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.1.0-preview4.19579.2" PrivateAssets="all" />    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\AutoStep.Editor.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Store\Index\" />
     <Folder Include="wwwroot\script\monaco\" />
+    <Folder Include="wwwroot\script\monaco-interop\" />
   </ItemGroup>
 
 </Project>

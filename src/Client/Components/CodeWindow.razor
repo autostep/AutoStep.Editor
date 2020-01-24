@@ -1,18 +1,24 @@
-﻿@using Store.CodeWindow
+﻿@using Store
+@using Store.CodeWindow
 @inherits Blazor.Fluxor.Components.FluxorComponent
 @inject IDispatcher Dispatcher
-@inject IState<CodeWindowState> State
+@inject IState<AppState> State
 
 
-<MonacoEditor Code="@State.Value.CodeBody" />
+<MonacoEditor InitialCode="@State.Value.CodeWindow.InitialCodeBody" OnCodeChanged="CodeChangedHandler" />
 
 @code
 {
-    [Parameter]
-    public string SourceName { get; set; }
+  [Parameter]
+  public string SourceName { get; set; }
 
-    protected override void OnParametersSet()
-    {
-        Dispatcher.Dispatch(new LoadCodeAction(SourceName));
-    }
+  protected override void OnParametersSet()
+  {
+      Dispatcher.Dispatch(new LoadCodeAction(SourceName));
+  }
+
+  public void CodeChangedHandler(string newCode)
+  {
+      Dispatcher.Dispatch(new CodeChangeAction(newCode));
+  }
 }
