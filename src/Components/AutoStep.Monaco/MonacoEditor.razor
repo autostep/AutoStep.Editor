@@ -1,0 +1,77 @@
+﻿@inject IJSRuntime JS
+
+<div @ref="monacoContainer" class="monaco-editor-container" />
+
+@code
+{
+    private ElementReference monacoContainer;
+    private string initiallyLoadedCode;
+
+    [Parameter]
+    public string InitialCode
+    {
+        get => initiallyLoadedCode;
+        set
+        {
+            if (initiallyLoadedCode != value)
+            {
+                initiallyLoadedCode = value;
+                UpdateContent();
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> OnCodeChanged { get; set; }
+
+    private string internalId;
+    private bool editorLoaded;
+    private MonacoEventTarget eventTarget;
+
+    private class MonacoEventTarget
+    {
+        private Action<string> onChange;
+
+        public MonacoEventTarget(Action<string> changeEvent)
+        {
+            onChange = changeEvent;
+        }
+
+        [JSInvokable]
+        public void EditorContentChanged(string content)
+        {
+            onChange(content);
+        }
+    }
+
+    private void UpdateContent()
+    {
+        if (editorLoaded && InitialCode is object)
+        {
+            Console.WriteLine("Invoking monacoInterop.setContent");
+            JS.InvokeVoidAsync("monacoInterop.setContent", internalId, InitialCode);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Console.WriteLine("First Render");
+
+            internalId = Guid.NewGuid().ToString();
+            eventTarget = new MonacoEventTarget(s =>
+            {
+                OnCodeChanged.InvokeAsync(s);
+            });
+
+            await JS.InvokeVoidAsync("monacoInterop.initialiseEditor", internalId, monacoContainer, DotNetObjectReference.Create(eventTarget));
+
+            Console.WriteLine("monacoInterop.initialiseEditor complete");
+
+            editorLoaded = true;
+
+            UpdateContent();
+        }
+    }
+}

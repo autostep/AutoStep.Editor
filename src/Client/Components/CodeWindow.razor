@@ -3,7 +3,7 @@
 @inherits Blazor.Fluxor.Components.FluxorComponent
 @inject IDispatcher Dispatcher
 @inject IState<AppState> State
-
+ 
 
 <MonacoEditor InitialCode="@State.Value.CodeWindow.InitialCodeBody" OnCodeChanged="CodeChangedHandler" />
 

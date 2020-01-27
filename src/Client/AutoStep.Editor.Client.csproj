@@ -14,11 +14,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.1.0-preview4.19579.2" PrivateAssets="all" />    
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Components\AutoStep.Monaco\AutoStep.Monaco.csproj" />
     <ProjectReference Include="..\Shared\AutoStep.Editor.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Store\Index\" />
-    <Folder Include="wwwroot\script\monaco\" />
     <Folder Include="wwwroot\script\monaco-interop\" />
   </ItemGroup>
 

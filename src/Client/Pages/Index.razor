@@ -4,14 +4,14 @@
 
 <div class="flex-grow-1">
     <CodeWindow SourceName="testSource" />
-</div>
-<button @onclick="CompileCode">Compile</button>
-<div>
-    <p>Feature Name: @featureName</p>
-    @foreach (var msg in compileMessages)
-    {
-        <p>@msg</p>
-    }
+    <button @onclick="CompileCode">Compile</button>
+    <div>
+        <p>Feature Name: @featureName</p>
+        @foreach (var msg in compileMessages)
+        {
+            <p>@msg</p>
+        }
+    </div>
 </div>
 
 @code {
