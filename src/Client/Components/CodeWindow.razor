@@ -3,22 +3,22 @@
 @inherits Blazor.Fluxor.Components.FluxorComponent
 @inject IDispatcher Dispatcher
 @inject IState<AppState> State
- 
+
 
 <MonacoEditor InitialCode="@State.Value.CodeWindow.InitialCodeBody" OnCodeChanged="CodeChangedHandler" />
 
 @code
 {
-  [Parameter]
-  public string SourceName { get; set; }
+    [Parameter]
+    public string SourceName { get; set; }
 
-  protected override void OnParametersSet()
-  {
-      Dispatcher.Dispatch(new LoadCodeAction(SourceName));
-  }
+    protected override void OnParametersSet()
+    {
+        Dispatcher.Dispatch(new LoadCodeAction(SourceName));
+    }
 
-  public void CodeChangedHandler(string newCode)
-  {
-      Dispatcher.Dispatch(new CodeChangeAction(newCode));
-  }
+    public void CodeChangedHandler(string newCode)
+    {
+        Dispatcher.Dispatch(new CodeChangeAction(newCode));
+    }
 }
