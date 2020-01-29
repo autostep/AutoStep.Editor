@@ -1,5 +1,0 @@
-<Project>
- <PropertyGroup>
-   <RestoreSources>$(RestoreSources);https://f.feedz.io/autostep/ci/nuget/index.json</RestoreSources>
- </PropertyGroup>
-</Project>

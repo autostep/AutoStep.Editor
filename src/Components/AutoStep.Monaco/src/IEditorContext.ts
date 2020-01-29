@@ -1,11 +1,12 @@
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { IBlazorInteropObject, EventHandler } from './EventHandler';
+import { EditorEventHandler } from './EditorEventHandler';
+import { IBlazorInteropObject } from './IBlazorInteropObject';
 
 export interface IEditorContext 
 {
     id: string;
     codeEditor: monaco.editor.IStandaloneCodeEditor;
     updating: boolean;
-    eventHandler?: EventHandler
+    eventHandler?: EditorEventHandler
     eventSink?: IBlazorInteropObject;
 }

@@ -11,7 +11,7 @@ namespace AutoStep.Editor.Server.Controllers
     [Route("api/[controller]")]
     public class ResourcesController : ControllerBase
     {
-        [HttpGet("{sourceName}")]
+        [HttpGet("{**sourceName}")]
         public CodeResource Get(string sourceName)
         {
             return new CodeResource

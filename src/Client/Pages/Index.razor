@@ -1,33 +1,47 @@
 ﻿@page "/"
 @using Store
-@inject IState<AppState> AppState
+@using AutoStep.Definitions
+@using AutoStep.Projects;
+@using AutoStep.Editor.Client.Language
+@inherits Blazor.Fluxor.Components.FluxorComponent
+@inject IState<AppState> State
+@inject IDispatcher Dispatcher
+@inject HttpClient Http
 
 <div class="flex-grow-1">
-    <CodeWindow SourceName="testSource" />
-    <button @onclick="CompileCode">Compile</button>
-    <div>
-        <p>Feature Name: @featureName</p>
-        @foreach (var msg in compileMessages)
-        {
-            <p>@msg</p>
-        }
-    </div>
+    @{ Console.WriteLine("Rendering Index"); }
+    @if (State.Value.Project is object)
+    {
+        Console.WriteLine("Rendering Window");
+        <CodeWindow />
+    }
 </div>
 
-@code {
+@code
+{
+  protected override void OnInitialized()
+  {
+      base.OnInitialized();
 
-    string[] compileMessages = new string[0];
-    string featureName;
+      // Create a project.
+      var project = new Project();
 
-    async Task CompileCode()
-    {
-        var compiler = new AutoStep.Compiler.AutoStepCompiler();
+      // Create a default file.
+      var fileSource = new ProjectFileSource(Http, "testfile.as");
 
-        var source = new AutoStep.Compiler.StringContentSource(AppState.Value.CodeWindow.CodeBody);
+      var projectFile = new ProjectFile("testfile.as", fileSource);
 
-        var result = await compiler.CompileAsync(source);
+      project.TryAddFile(projectFile);
 
-        compileMessages = result.Messages.Select(x => x.ToString()).ToArray();
-        featureName = result.Output?.Feature?.Name;
-    }
+      var defaultFileState = new ProjectFileState(new Uri("file://testfile.as"), projectFile, fileSource);
+
+      var callbackSource = new CallbackDefinitionSource();
+
+      callbackSource.Given("I have entered {arg1} into {arg2}", () => { });
+      callbackSource.Given("I have selected {type} in the {name} dropdown", () => { });
+
+      project.Compiler.AddStaticStepDefinitionSource(callbackSource);
+
+      Dispatcher.Dispatch(new SwitchProjectAction(project, defaultFileState));
+  }
 }

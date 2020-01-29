@@ -17,10 +17,14 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
 
         public override AppState Reduce(AppState state, IAutoStepAction action)
         {
+            Console.WriteLine("Reducer:" + action.GetType().ToString());
+
             return action switch
             {
-                ICodeWindowAction codeWindowAction =>  new AppState(codeWindowReducer.Reduce(state.CodeWindow, codeWindowAction)),
-                _ => state
+                SwitchProjectAction changeProjectAction => new AppState(changeProjectAction.NewProject, state.CodeWindow),
+                ProjectCompiledAction compiled => new AppState(state.Project, codeWindowReducer.Reduce(state.CodeWindow, compiled)),
+                ICodeWindowAction codeWindowAction => new AppState(state.Project, codeWindowReducer.Reduce(state.CodeWindow, codeWindowAction)),
+                _ => new AppState(state.Project, state.CodeWindow)
             };
         }
     }

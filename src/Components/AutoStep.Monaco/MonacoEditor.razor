@@ -1,77 +1,104 @@
-﻿@inject IJSRuntime JS
+﻿@using  AutoStep.Monaco.Interop;
+@inject MonacoInterop MonacoInterop
 
 <div @ref="monacoContainer" class="monaco-editor-container" />
 
 @code
 {
-    private ElementReference monacoContainer;
-    private string initiallyLoadedCode;
+  private ElementReference monacoContainer;
+  private CodeEditor editor;
+  private TextModel currentTextModel;
+  private IEnumerable<MarkerData> currentMarkers;
 
-    [Parameter]
-    public string InitialCode
-    {
-        get => initiallyLoadedCode;
-        set
-        {
-            if (initiallyLoadedCode != value)
-            {
-                initiallyLoadedCode = value;
-                UpdateContent();
-            }
-        }
-    }
+  [Parameter]
+  public string Uri { get; set; }
 
-    [Parameter]
-    public EventCallback<string> OnCodeChanged { get; set; }
+  [Parameter]
+  public string Value { get; set; }
 
-    private string internalId;
-    private bool editorLoaded;
-    private MonacoEventTarget eventTarget;
+  [Parameter]
+  public string LanguageId { get; set; }
 
-    private class MonacoEventTarget
-    {
-        private Action<string> onChange;
+  [Parameter]
+  public EventCallback<TextModel> OnModelChanged { get; set; }
 
-        public MonacoEventTarget(Action<string> changeEvent)
-        {
-            onChange = changeEvent;
-        }
+  [Parameter]
+  public IEnumerable<MarkerData> ModelMarkers { get; set; }
 
-        [JSInvokable]
-        public void EditorContentChanged(string content)
-        {
-            onChange(content);
-        }
-    }
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+      if (firstRender)
+      {
+          Console.WriteLine("First Render");
 
-    private void UpdateContent()
-    {
-        if (editorLoaded && InitialCode is object)
-        {
-            Console.WriteLine("Invoking monacoInterop.setContent");
-            JS.InvokeVoidAsync("monacoInterop.setContent", internalId, InitialCode);
-        }
-    }
+          editor = await MonacoInterop.CreateEditor(monacoContainer);
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            Console.WriteLine("First Render");
+          Console.WriteLine("Editor Created");
 
-            internalId = Guid.NewGuid().ToString();
-            eventTarget = new MonacoEventTarget(s =>
-            {
-                OnCodeChanged.InvokeAsync(s);
-            });
+          if(currentTextModel is object)
+          {
+              await editor.SetModel(currentTextModel);
+          }
+      }
+  }
 
-            await JS.InvokeVoidAsync("monacoInterop.initialiseEditor", internalId, monacoContainer, DotNetObjectReference.Create(eventTarget));
+  protected override async Task OnParametersSetAsync()
+  {
 
-            Console.WriteLine("monacoInterop.initialiseEditor complete");
+      if (currentTextModel is null)
+      {
+          if (!string.IsNullOrEmpty(Uri) && !string.IsNullOrEmpty(Value))
+          {
+              Console.Write("Creating Model");
+              // Create a text model.
+              currentTextModel = await MonacoInterop.CreateTextModel(Uri, Value, LanguageId);
 
-            editorLoaded = true;
+              // Attach events.
+              currentTextModel.OnModelChanged += ModelChangedHandler;
 
-            UpdateContent();
-        }
-    }
+              if (editor is object)
+              {
+                  await editor.SetModel(currentTextModel);
+              }
+          }
+      }
+      else if(Uri != currentTextModel.Uri)
+      {
+          Console.Write("Changing Model");
+          // Detach events.
+          currentTextModel.OnModelChanged -= ModelChangedHandler;
+
+          // Completely new model; create one.
+          currentTextModel = await MonacoInterop.CreateTextModel(Uri, Value, LanguageId);
+
+          if(editor is object)
+          {
+              await editor.SetModel(currentTextModel);
+          }
+
+          if(ModelMarkers != null)
+          {
+              currentMarkers = ModelMarkers;
+              await currentTextModel.SetMarkers(null, currentMarkers);
+          }
+      }
+      else
+      {
+          if(currentMarkers != ModelMarkers)
+          {
+              Console.WriteLine("Markers Changing");
+              currentMarkers = ModelMarkers;
+              await currentTextModel.SetMarkers(null, currentMarkers);
+          }
+      }
+  }
+
+  private void ModelChangedHandler(object textModel, string newValue)
+  {
+      // Make sure the event is still relevant.
+      if(textModel == currentTextModel)
+      {
+          OnModelChanged.InvokeAsync(currentTextModel);
+      }
+  }
 }

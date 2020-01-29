@@ -1,4 +1,5 @@
-﻿@inject Blazor.Fluxor.IStore Store
+﻿@using AutoStep.Editor.Client.Language
+@inject Blazor.Fluxor.IStore Store
 @Store.Initialize()
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">

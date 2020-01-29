@@ -1,14 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AutoStep.Editor.Client.Language;
+using AutoStep.Projects;
 
 namespace AutoStep.Editor.Client.Store.CodeWindow
 {
-    public interface IAutoStepAction
-    {
-    }
-
     /// <summary>
     /// <see cref="CodeWindowReducer"/>
     /// </summary>
@@ -17,34 +11,40 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
     }
 
     /// <summary>
-    /// <see cref="LoadCodeEffect"/>
+    /// <see cref="ChangeFileEffect"/>
     /// </summary>
-    public struct LoadCodeAction : ICodeWindowAction
+    public class ChangeFileAction : ICodeWindowAction
     {
-        public string SourceName { get; }
+        public ProjectFileState NewFile { get; }
 
-        public LoadCodeAction(string sourceName)
+        public ChangeFileAction(ProjectFileState newFile)
         {
-            SourceName = sourceName;
+            NewFile = newFile;
         }
     }
     
-    public struct LoadCodeCompleteAction : ICodeWindowAction
+    public class LoadCodeCompleteAction : ICodeWindowAction
     {
-        public string Body { get; }
+        public ProjectFileState File { get; set; }
 
-        public LoadCodeCompleteAction(string body)
+        public LoadCodeCompleteAction(ProjectFileState file)
         {
-            Body = body;
+            File = file;
         }
     }
 
-    public struct CodeChangeAction : ICodeWindowAction
+    public class CodeChangeAction : ICodeWindowAction
     {
+        public Project Project { get; }
+
+        public ProjectFileState File { get; }
+
         public string Body { get; }
 
-        public CodeChangeAction(string body)
+        public CodeChangeAction(Project project, ProjectFileState file, string body)
         {
+            Project = project;
+            File = file;
             Body = body;
         }
     }

@@ -1,16 +1,30 @@
-﻿using Microsoft.AspNetCore.Blazor.Hosting;
+﻿using AutoStep.Compiler;
+using AutoStep.Editor.Client.Language;
+using AutoStep.Monaco;
+using Blazor.Fluxor;
+using Microsoft.AspNetCore.Blazor.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace AutoStep.Editor.Client
 {
-  public class Program
-  {
-    public static void Main(string[] args)
+    public class Program
     {
-      CreateHostBuilder(args).Build().Run();
-    }
+        public static async Task Main(string[] args)
+        {
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-    public static IWebAssemblyHostBuilder CreateHostBuilder(string[] args) =>
-        BlazorWebAssemblyHost.CreateDefaultBuilder()            
-            .UseBlazorStartup<Startup>();
-  }
+            builder.Services.AddFluxor(options =>
+                options.UseDependencyInjection(typeof(Program).Assembly)
+            );
+
+            builder.Services.AddMonaco();
+
+            builder.Services.AddLogging();
+
+            builder.RootComponents.Add<App>("app");
+
+            await builder.Build().RunAsync();
+        }
+    }
 }
