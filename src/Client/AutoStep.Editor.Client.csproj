@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazor.Fluxor" Version="1.3.2-dotnet3.1.0-preview4.19579.2" />
-    <PackageReference Include="AutoStep" Version="1.0.0-line-tokenisation.106" />
+    <PackageReference Include="AutoStep" Version="1.0.0-ci.108" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="3.2.0-preview1.20073.1" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="3.2.0-preview1.20073.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.2.0-preview1.20073.1" />
