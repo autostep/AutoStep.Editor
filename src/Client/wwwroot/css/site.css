@@ -168,6 +168,7 @@ app {
 app 
 {
     height: 100vh;
+    overflow: hidden;
 }
 
 #blazor-error-ui {
@@ -191,9 +192,9 @@ app
 
 .sidebar 
 {
-    width: 250px;
+    width: 80px;
 }
 
 .monaco-editor-container {
-  height: 90%;
+  height: 100%;
 }

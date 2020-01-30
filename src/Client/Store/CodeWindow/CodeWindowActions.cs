@@ -15,17 +15,20 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
     /// </summary>
     public class ChangeFileAction : ICodeWindowAction
     {
+        public Project Project { get; }
+
         public ProjectFileState NewFile { get; }
 
-        public ChangeFileAction(ProjectFileState newFile)
+        public ChangeFileAction(Project project, ProjectFileState newFile)
         {
+            Project = project;
             NewFile = newFile;
         }
     }
     
     public class LoadCodeCompleteAction : ICodeWindowAction
     {
-        public ProjectFileState File { get; set; }
+        public ProjectFileState File { get; }
 
         public LoadCodeCompleteAction(ProjectFileState file)
         {

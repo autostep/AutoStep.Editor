@@ -8,6 +8,7 @@
   private ElementReference monacoContainer;
   private CodeEditor editor;
   private TextModel currentTextModel;
+  private string lastUri;
   private IEnumerable<MarkerData> currentMarkers;
 
   [Parameter]
@@ -44,32 +45,22 @@
 
   protected override async Task OnParametersSetAsync()
   {
-
-      if (currentTextModel is null)
+      if(Uri != lastUri)
       {
-          if (!string.IsNullOrEmpty(Uri) && !string.IsNullOrEmpty(Value))
+          Console.WriteLine("Changing Model");
+          lastUri = Uri;
+
+          if (currentTextModel is object)
           {
-              Console.Write("Creating Model");
-              // Create a text model.
-              currentTextModel = await MonacoInterop.CreateTextModel(Uri, Value, LanguageId);
-
-              // Attach events.
-              currentTextModel.OnModelChanged += ModelChangedHandler;
-
-              if (editor is object)
-              {
-                  await editor.SetModel(currentTextModel);
-              }
+              // Detach events.
+              currentTextModel.OnModelChanged -= ModelChangedHandler;
           }
-      }
-      else if(Uri != currentTextModel.Uri)
-      {
-          Console.Write("Changing Model");
-          // Detach events.
-          currentTextModel.OnModelChanged -= ModelChangedHandler;
 
           // Completely new model; create one.
           currentTextModel = await MonacoInterop.CreateTextModel(Uri, Value, LanguageId);
+
+          // Attach events.
+          currentTextModel.OnModelChanged += ModelChangedHandler;
 
           if(editor is object)
           {
@@ -82,8 +73,15 @@
               await currentTextModel.SetMarkers(null, currentMarkers);
           }
       }
-      else
+      else if(currentTextModel is object)
       {
+          // Change the model content.
+          if(Value != currentTextModel.InitialValue)
+          {
+              currentTextModel.InitialValue = Value;
+              await currentTextModel.SetContent(Value);
+          }
+
           if(currentMarkers != ModelMarkers)
           {
               Console.WriteLine("Markers Changing");

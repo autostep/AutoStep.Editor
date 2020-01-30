@@ -1,5 +1,6 @@
 ﻿using AutoStep.Monaco.Interop;
 using AutoStep.Projects;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,18 @@ namespace AutoStep.Editor.Client.Language
             InitScope("entity.name.section", LineTokenCategory.EntityName, LineTokenSubCategory.Scenario);
             InitScope("entity.name.section", LineTokenCategory.EntityName, LineTokenSubCategory.ScenarioOutline);
             InitScope("entity.name.type", LineTokenCategory.EntityName, LineTokenSubCategory.Feature);
-            InitScope("entity.other.attribute-name", LineTokenCategory.Annotation);
+            InitScope("entity.annotation", LineTokenCategory.Annotation);
+            InitScope("entity.annotation.opt", LineTokenCategory.Annotation, LineTokenSubCategory.Option);
+            InitScope("entity.annotation.tag", LineTokenCategory.Annotation, LineTokenSubCategory.Tag);
             InitScope("string", LineTokenCategory.BoundArgument);
-            InitScope("support.variable", LineTokenCategory.Variable);
+            InitScope("string.variable", LineTokenCategory.BoundArgument, LineTokenSubCategory.ArgumentVariable);
+            InitScope("variable", LineTokenCategory.Variable);
+            InitScope("markup.italic", LineTokenCategory.Text, LineTokenSubCategory.Description);
+            InitScope("text", LineTokenCategory.Text);
+            InitScope("entity.step.text", LineTokenCategory.StepText);
+            InitScope("entity.step.text.bound", LineTokenCategory.StepText, LineTokenSubCategory.Bound);
+            InitScope("entity.step.text.unbound", LineTokenCategory.StepText, LineTokenSubCategory.Unbound);
+            InitScope("table.separator", LineTokenCategory.TableBorder);
         }
 
         static void InitScope(string scopeText, LineTokenCategory category, LineTokenSubCategory subCategory = LineTokenSubCategory.None)
@@ -51,10 +61,12 @@ namespace AutoStep.Editor.Client.Language
         }
 
         private readonly IProjectCompiler projectCompiler;
+        private readonly ILogger logger;
 
-        public AutoStepTokenizer(IProjectCompiler projectCompiler)
+        public AutoStepTokenizer(IProjectCompiler projectCompiler, ILoggerFactory logFactory)
         {
             this.projectCompiler = projectCompiler;
+            this.logger = logFactory.CreateLogger<AutoStepTokenizer>();
         }
 
         [JSInvokable]
@@ -66,14 +78,15 @@ namespace AutoStep.Editor.Client.Language
         [JSInvokable]
         public TokenizeResult Tokenize(string line, int state)
         {
-            Console.WriteLine("Tokenise:" + line);
-
             try
             {
-                // Use the project compiler to tokenise.
-                var tokenised = projectCompiler.TokeniseLine(line, (LineTokeniserState)state);
+                var castState = (LineTokeniserState)state;
 
-                var tokenArray = tokenised.Tokens.Select(x => new LanguageToken(x.StartPosition, GetScopeText(x.Category, x.SubCategory))).ToArray();
+                logger.LogTrace("Tokenise Start in State {0}: {1}", castState, line);
+                // Use the project compiler to tokenise.
+                var tokenised = projectCompiler.TokeniseLine(line, castState);
+
+                var tokenArray = tokenised.Tokens.Select(x => new LanguageToken(x.StartPosition, GetScopeText(x.Category, x.SubCategory)));
 
                 return new TokenizeResult((int)tokenised.EndState, tokenArray);
             } 

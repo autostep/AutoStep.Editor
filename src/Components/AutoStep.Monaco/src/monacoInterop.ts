@@ -20,9 +20,24 @@ class MonacoInterop {
     
     constructor()
     {
+        editor.defineTheme('autostep', {
+            base: 'vs',
+            inherit: true,
+            rules: [
+                { token: "markup.italic", fontStyle: 'italic' },
+                { token: "string.variable", fontStyle: 'italic' },
+                { token: "variable", fontStyle: 'italic' },
+                { token: "entity.step.text.unbound", foreground: '#969696' },
+                { token: "entity.annotation.opt", foreground: '#fbad38' },
+                { token: "entity.annotation.tag", foreground: '#fbad38' }
+            ],
+            colors: {} 
+        });
+
+        editor.setTheme('autostep');
     }
 
-    createEditor(id: string, container: HTMLElement, blazorCallback: IBlazorInteropObject) {
+    createEditor(id: string, container: HTMLElement, themeId: string, blazorCallback: IBlazorInteropObject) {
         console.log("createEditor");
 
         var newEditor = editor.create(container);
@@ -64,11 +79,11 @@ class MonacoInterop {
             modelContext.changeTimer = setTimeout(() => {
 
                 modelContext.changeTimer = 0;
-                // Wait 2 seconds for someone to finish typing,
+                // Wait 1 second for someone to finish typing,
                 // then raise the event.
                 modelContext.eventHandler.modelUpdated(model.getValue());
 
-            }, 2000);
+            }, 1000);
         });
 
         this.models[uri] = modelContext;
@@ -86,6 +101,11 @@ class MonacoInterop {
         languages.setTokensProvider(languageId, tokenProvider);
     }
 
+    registerTokenTheme(themeId: string, rulesJson: string)
+    {
+        var rules : any[] = JSON.parse(rulesJson);
+    }
+
     setModelMarkers(textModelUri: string, owner: string, markers: editor.IMarkerData[])
     {
         var modelCtxt = this.models[textModelUri];
@@ -95,6 +115,22 @@ class MonacoInterop {
         }
 
         editor.setModelMarkers(modelCtxt.textModel, owner, markers);
+
+        // Force a background re-tokenise when we get the model markers through, because compilation changes may have caused
+        // everything to change.
+        var unsafeModel: any = modelCtxt.textModel;
+        unsafeModel._tokenization._resetTokenizationState();
+    }
+
+    setModelContent(textModelUri: string, newContent: string)
+    {
+        var modelCtxt = this.models[textModelUri];
+
+        if (!modelCtxt) {
+            throw "Specified model not created.";
+        }
+
+        modelCtxt.textModel.setValue(newContent);
     }
 
     setEditorModel(editorId: string, textModelUri: string)

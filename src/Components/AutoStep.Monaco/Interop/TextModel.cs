@@ -43,5 +43,12 @@ namespace AutoStep.Monaco.Interop
         {
             await interop.SetModelMarkers(this, owner, markers);
         }
+
+        public async ValueTask SetContent(string content)
+        {
+            InitialValue = content;
+            await interop.SetModelContent(this, content);
+            CurrentValue = content;
+        }
     }
 }

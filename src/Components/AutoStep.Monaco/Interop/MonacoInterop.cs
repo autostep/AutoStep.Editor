@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,14 @@ namespace AutoStep.Monaco.Interop
     public class MonacoInterop
     {
         private readonly IJSRuntime jsRuntime;
+        private readonly ILogger logger;
 
         private const string InteropPrefix = "monacoInterop.";
 
-        public MonacoInterop(IJSRuntime jsRuntime)
+        public MonacoInterop(IJSRuntime jsRuntime, ILoggerFactory logFactory)
         {
             this.jsRuntime = jsRuntime;
+            this.logger = logFactory.CreateLogger<MonacoInterop>();
         }
 
         public async ValueTask<CodeEditor> CreateEditor(ElementReference element)
@@ -50,14 +53,23 @@ namespace AutoStep.Monaco.Interop
             await InvokeVoidAsync("setModelMarkers", model.Uri, owner, markers);
         }
 
+        public async ValueTask SetModelContent(TextModel model, string newContent)
+        {
+            await InvokeVoidAsync("setModelContent", model.Uri, newContent);
+        }
+
         public ValueTask<TResult> InvokeAsync<TResult>(string methodName, params object[] args)
         {
-            return jsRuntime.InvokeAsync<TResult>(InteropPrefix + methodName, args);
+            var fullname = InteropPrefix + methodName;
+            logger.LogDebug("InvokeAsync: {0}", fullname);
+            return jsRuntime.InvokeAsync<TResult>(fullname, args);
         }
 
         public ValueTask InvokeVoidAsync(string methodName, params object[] args)
         {
-            return jsRuntime.InvokeVoidAsync(InteropPrefix + methodName, args);
+            var fullname = InteropPrefix + methodName;
+            logger.LogDebug("InvokeVoidAsync: {0}", fullname);
+            return jsRuntime.InvokeVoidAsync(fullname, args);
         }
     }
 }

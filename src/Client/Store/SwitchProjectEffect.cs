@@ -14,7 +14,7 @@ namespace AutoStep.Editor.Client.Store
             try
             {
                 // Just dispatch a change file action.
-                dispatcher.Dispatch(new ChangeFileAction(action.DefaultFile));
+                dispatcher.Dispatch(new ChangeFileAction(action.NewProject, action.DefaultFile));
             }
             catch
             {

@@ -18,9 +18,12 @@ namespace AutoStep.Editor.Client.Language
         {
             this.httpClient = httpClient;
             this.remoteReference = remoteReference;
+            lastModify = DateTime.UtcNow;
         }
 
         public string LocalFileBody { get; private set; }
+
+        public string OriginalBody { get; private set; }
 
         public void UpdateLocalBody(string body)
         {
@@ -33,7 +36,7 @@ namespace AutoStep.Editor.Client.Language
         public async ValueTask<string> GetContentAsync(CancellationToken cancelToken = default)
         {
             // Either use the local file or the remote one.
-            return LocalFileBody ?? (await httpClient.GetJsonAsync<CodeResource>($"api/resources/{remoteReference}")).Body;
+            return LocalFileBody ?? (OriginalBody = (await httpClient.GetJsonAsync<CodeResource>($"api/resources/{remoteReference}")).Body);
         }
 
         public DateTime GetLastContentModifyTime()
