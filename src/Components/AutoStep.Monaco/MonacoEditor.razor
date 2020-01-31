@@ -1,0 +1,102 @@
+﻿@using  AutoStep.Monaco.Interop;
+@inject MonacoInterop MonacoInterop
+
+<div @ref="monacoContainer" class="monaco-editor-container" />
+
+@code
+{
+  private ElementReference monacoContainer;
+  private CodeEditor editor;
+  private TextModel currentTextModel;
+  private string lastUri;
+  private IEnumerable<MarkerData> currentMarkers;
+
+  [Parameter]
+  public string Uri { get; set; }
+
+  [Parameter]
+  public string Value { get; set; }
+
+  [Parameter]
+  public string LanguageId { get; set; }
+
+  [Parameter]
+  public EventCallback<TextModel> OnModelChanged { get; set; }
+
+  [Parameter]
+  public IEnumerable<MarkerData> ModelMarkers { get; set; }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+      if (firstRender)
+      {
+          Console.WriteLine("First Render");
+
+          editor = await MonacoInterop.CreateEditor(monacoContainer);
+
+          Console.WriteLine("Editor Created");
+
+          if(currentTextModel is object)
+          {
+              await editor.SetModel(currentTextModel);
+          }
+      }
+  }
+
+  protected override async Task OnParametersSetAsync()
+  {
+      if(Uri != lastUri)
+      {
+          Console.WriteLine("Changing Model");
+          lastUri = Uri;
+
+          if (currentTextModel is object)
+          {
+              // Detach events.
+              currentTextModel.OnModelChanged -= ModelChangedHandler;
+          }
+
+          // Completely new model; create one.
+          currentTextModel = await MonacoInterop.CreateTextModel(Uri, Value, LanguageId);
+
+          // Attach events.
+          currentTextModel.OnModelChanged += ModelChangedHandler;
+
+          if(editor is object)
+          {
+              await editor.SetModel(currentTextModel);
+          }
+
+          if(ModelMarkers != null)
+          {
+              currentMarkers = ModelMarkers;
+              await currentTextModel.SetMarkers(null, currentMarkers);
+          }
+      }
+      else if(currentTextModel is object)
+      {
+          // Change the model content.
+          if(Value != currentTextModel.InitialValue)
+          {
+              currentTextModel.InitialValue = Value;
+              await currentTextModel.SetContent(Value);
+          }
+
+          if(currentMarkers != ModelMarkers)
+          {
+              Console.WriteLine("Markers Changing");
+              currentMarkers = ModelMarkers;
+              await currentTextModel.SetMarkers(null, currentMarkers);
+          }
+      }
+  }
+
+  private void ModelChangedHandler(object textModel, string newValue)
+  {
+      // Make sure the event is still relevant.
+      if(textModel == currentTextModel)
+      {
+          OnModelChanged.InvokeAsync(currentTextModel);
+      }
+  }
+}

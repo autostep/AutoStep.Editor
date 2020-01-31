@@ -1,0 +1,119 @@
+﻿@using Monaco.Interop
+@using AutoStep.Compiler
+@using AutoStep.Editor.Client.Language
+@inherits Blazor.Fluxor.Components.FluxorComponent
+@implements IDisposable
+@inject IDispatcher Dispatcher
+@inject IState<AppState> State
+@inject MonacoInterop Monaco
+@inject Microsoft.Extensions.Logging.ILoggerFactory LogFactory
+
+@if (currentFile is object)
+{
+    Console.WriteLine("Rendering Inner Window");
+<MonacoEditor Uri="@currentFile.FileUri.ToString()" Value="@currentFile.Source.OriginalBody" ModelMarkers="currentMarkers" OnModelChanged="m => CodeChangedHandler(m.CurrentValue)" LanguageId="autostep" />
+}
+
+@code
+{
+  private ProjectFileState currentFile;
+  private FileCompilerResult compileResult;
+  private LinkResult linkResult;
+  private IEnumerable<MarkerData> currentMarkers = Enumerable.Empty<MarkerData>();
+  private static bool hasInitialisedLanguage;
+
+  private static MarkerData GetMarkerDataFromMessage(CompilerMessage msg)
+  {
+      var severity = msg.Level switch
+      {
+          CompilerMessageLevel.Error => MarkerSeverity.Error,
+          CompilerMessageLevel.Warning => MarkerSeverity.Warning,
+          _ => MarkerSeverity.Info
+      };
+
+      var endPosition = msg.EndColumn;
+
+      if(endPosition is null)
+      {
+          endPosition = msg.StartColumn;
+      }
+      else
+      {
+          endPosition++;
+      }
+
+      // Expand message end to the location after the token
+      return new MarkerData($"ASC{(int)msg.Code:D5}", msg.Message, severity, msg.StartColumn, msg.StartLineNo, endPosition.Value, msg.EndLineNo ?? msg.StartLineNo);
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+      if (!hasInitialisedLanguage)
+      {
+          hasInitialisedLanguage = true;
+
+          Console.WriteLine("Registering Language");
+
+          var project = State.Value.Project;
+
+          await Monaco.RegisterLanguageTokenizer("autostep", ".as", new AutoStepTokenizer(project.Compiler, LogFactory));
+      }
+
+      await base.OnInitializedAsync();
+
+      State.StateChanged += StateChanged;
+  }
+
+  public void Dispose()
+  {
+      State.StateChanged -= StateChanged;
+  }
+
+  private void StateChanged(object sender, AppState state)
+  {
+      Console.WriteLine("State Change");
+
+      if (currentFile != state.CodeWindow.DisplayedFile)
+      {
+          currentFile = state.CodeWindow.DisplayedFile;
+          currentMarkers = Enumerable.Empty<MarkerData>();
+
+          StateHasChanged();
+      }
+
+      Console.WriteLine("Compile TimeStamp: {0}", currentFile?.File.LastCompileTime);
+
+      if (currentFile?.File.LastCompileResult != compileResult || currentFile?.File.LastLinkResult != linkResult)
+      {
+          Console.WriteLine("Regenerating Messages");
+
+          compileResult = currentFile.File.LastCompileResult;
+          linkResult = currentFile.File.LastLinkResult;
+
+          IEnumerable<CompilerMessage> messages;
+
+          if (compileResult is null)
+          {
+              messages = Enumerable.Empty<CompilerMessage>();
+          }
+          else
+          {
+              messages = compileResult.Messages;
+
+              if (linkResult is object)
+              {
+                  messages = messages.Concat(linkResult.Messages);
+              }
+          }
+
+          currentMarkers = messages.Select(m => GetMarkerDataFromMessage(m));
+
+          StateHasChanged();
+      }
+  }
+
+  public void CodeChangedHandler(string newCode)
+  {
+      Dispatcher.Dispatch(new CodeChangeAction(State.Value.Project, State.Value.CodeWindow.DisplayedFile, newCode));
+  }
+}

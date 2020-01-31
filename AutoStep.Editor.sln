@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Editor.Server", "src\Server\AutoStep.Editor.Server.csproj", "{1B64DE78-93E7-4A63-A7D7-A1903AD08DBF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Editor.Client", "src\Client\AutoStep.Editor.Client.csproj", "{9F2DB80B-0E06-46F1-972B-DB8DB7D346AB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Editor.Shared", "src\Shared\AutoStep.Editor.Shared.csproj", "{36155186-66F6-43E5-A313-E0A87C5889E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2CC23C69-CA55-466F-81D0-F102290A7F6F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+		NuGet.config = NuGet.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{6AEE6A53-5EA8-4E9B-91F4-29F53CD6D537}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoStep.Monaco", "src\Components\AutoStep.Monaco\AutoStep.Monaco.csproj", "{831FBEF9-8933-4155-98A6-6B670F59352D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1B64DE78-93E7-4A63-A7D7-A1903AD08DBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B64DE78-93E7-4A63-A7D7-A1903AD08DBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B64DE78-93E7-4A63-A7D7-A1903AD08DBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B64DE78-93E7-4A63-A7D7-A1903AD08DBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F2DB80B-0E06-46F1-972B-DB8DB7D346AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F2DB80B-0E06-46F1-972B-DB8DB7D346AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F2DB80B-0E06-46F1-972B-DB8DB7D346AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2DB80B-0E06-46F1-972B-DB8DB7D346AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36155186-66F6-43E5-A313-E0A87C5889E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36155186-66F6-43E5-A313-E0A87C5889E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36155186-66F6-43E5-A313-E0A87C5889E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36155186-66F6-43E5-A313-E0A87C5889E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{831FBEF9-8933-4155-98A6-6B670F59352D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{831FBEF9-8933-4155-98A6-6B670F59352D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{831FBEF9-8933-4155-98A6-6B670F59352D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{831FBEF9-8933-4155-98A6-6B670F59352D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{831FBEF9-8933-4155-98A6-6B670F59352D} = {6AEE6A53-5EA8-4E9B-91F4-29F53CD6D537}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5E9C9131-B749-4AA0-9D08-39A53D023A6E}
+	EndGlobalSection
+EndGlobal

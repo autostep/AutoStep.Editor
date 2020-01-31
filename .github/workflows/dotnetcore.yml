@@ -1,0 +1,29 @@
+name: AutoStep Editor Build
+
+on: [push,pull_request]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      
+    - name: Setup .NET Core      
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+      
+    - name: Publish Site
+      run: dotnet publish -c Release
+    
+    - name: Store Artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: AutoStep.Editor
+        path: src/Server/bin/Release/netcoreapp3.1/publish
