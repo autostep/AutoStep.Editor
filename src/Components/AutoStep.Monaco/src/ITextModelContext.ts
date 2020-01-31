@@ -6,6 +6,6 @@ export interface ITextModelContext {
     textModel: editor.ITextModel;
     updating: boolean;
     changeTimer: any;
-    eventHandler?: TextModelEventHandler
+    eventHandler?: TextModelEventHandler;
     eventSink?: IBlazorInteropObject;
 }

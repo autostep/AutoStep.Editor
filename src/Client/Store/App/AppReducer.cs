@@ -1,10 +1,8 @@
-﻿using Blazor.Fluxor;
+﻿using AutoStep.Editor.Client.Store.CodeWindow;
+using Blazor.Fluxor;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace AutoStep.Editor.Client.Store.CodeWindow
+namespace AutoStep.Editor.Client.Store.App
 {
     public class AppReducer : Reducer<AppState, IAutoStepAction>
     {

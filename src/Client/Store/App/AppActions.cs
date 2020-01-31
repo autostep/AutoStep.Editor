@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AutoStep.Editor.Client.Store
+namespace AutoStep.Editor.Client.Store.App
 {
     public class SwitchProjectAction : IAutoStepAction
-    { 
+    {
         public Project NewProject { get; }
 
         /// <summary>

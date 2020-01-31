@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Components\AutoStep.Monaco\AutoStep.Monaco.csproj">
-      <Private>true</Private>
+      <Private></Private>
     </ProjectReference>
     <ProjectReference Include="..\Shared\AutoStep.Editor.Shared.csproj" />
   </ItemGroup>

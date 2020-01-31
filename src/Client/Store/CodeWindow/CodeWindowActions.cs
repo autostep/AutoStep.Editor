@@ -1,4 +1,5 @@
 ﻿using AutoStep.Editor.Client.Language;
+using AutoStep.Editor.Client.Store.App;
 using AutoStep.Projects;
 
 namespace AutoStep.Editor.Client.Store.CodeWindow

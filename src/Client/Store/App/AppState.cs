@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AutoStep.Editor.Client.Store
+namespace AutoStep.Editor.Client.Store.App
 {
     public interface IAutoStepAction
     {
@@ -20,7 +20,7 @@ namespace AutoStep.Editor.Client.Store
 
         public AppState()
         {
-            CodeWindow = new CodeWindowState(null, false);                        
+            CodeWindow = new CodeWindowState(null, false);
             Project = null;
         }
 

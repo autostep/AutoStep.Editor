@@ -7,6 +7,6 @@ export interface IEditorContext
     id: string;
     codeEditor: monaco.editor.IStandaloneCodeEditor;
     updating: boolean;
-    eventHandler?: EditorEventHandler
+    eventHandler?: EditorEventHandler;
     eventSink?: IBlazorInteropObject;
 }

@@ -1,4 +1,5 @@
-﻿using AutoStep.Editor.Client.Store.CodeWindow;
+﻿using AutoStep.Editor.Client.Store.App;
+using AutoStep.Editor.Client.Store.CodeWindow;
 using AutoStep.Projects;
 using System;
 using System.Collections.Generic;
