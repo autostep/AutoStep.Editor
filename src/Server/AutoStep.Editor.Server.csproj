@@ -10,7 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\AutoStep.Editor.Client.csproj" />
+    <ProjectReference Include="..\Client\AutoStep.Editor.Client.csproj">
+      <Private>true</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\AutoStep.Editor.Shared.csproj" />
   </ItemGroup>
 
