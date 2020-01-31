@@ -17,8 +17,8 @@
 
     <Target Name="WebpackBuild" BeforeTargets="Build">
         <Exec Command="npm install" />
-        <Exec Command="webpack --config webpack.dev.js" Condition="$(Configuration) == 'Debug'" />
-        <Exec Command="webpack --config webpack.prod.js" Condition="$(Configuration) == 'Release'" />
+        <Exec Command="npm run build-dev" Condition="$(Configuration) == 'Debug'" />
+        <Exec Command="npm run build-prod" Condition="$(Configuration) == 'Release'" />
     </Target>
 
 </Project>
