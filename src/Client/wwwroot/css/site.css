@@ -192,7 +192,7 @@ app
 
 .sidebar 
 {
-    width: 80px;
+    width: 0px;
 }
 
 .monaco-editor-container {
