@@ -62,23 +62,23 @@ namespace AutoStep.Editor.Server {
         
         /// <summary>
         ///   Looks up a localized string similar to $Option1
-        ///$Option2: Setting 1
-        ///$Option1: Setting 2
-        ///
-        ///# comments above line
-        ///@Tag1 # comment end of line
-        ///@Tag2
         ///# comments above feature
         ///Feature: My Feature
-        ///# comments in feature description
-        ///  This is a description only
-        ///  partly this is part of the description # but this is a comment
+        ///  Feature description
         ///	
         ///  @scenariotag
         ///  $scenarioinstruction
         ///  Scenario: Setup
-        ///    Given I have logged in to my app as &apos;USER&apos;, password &apos;PWD&apos; # scenario has no description, this is a comment
-        ///        And I have turned on the global system [rest of string was truncated]&quot;;.
+        ///    Scenario description
+        ///
+        ///    Given I have logged in to my app as &apos;USER&apos;, password &apos;PWD&apos; # comment
+        ///        And I have turned on the global system config flag
+        ///
+        ///        # Time travel to June 2019 for Order Rule start date
+        ///        And the date/time is &apos;:Tomorrow at 13:00&apos;
+        ///  
+        ///    Given I have selected &apos;Client Management&apos; -&gt; &apos;Client Location&apos; in the menu
+        ///    Then  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TestFile {
             get {
