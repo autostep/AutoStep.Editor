@@ -6,7 +6,7 @@ namespace AutoStep.Monaco.Interop
     /// Represents a Monaco Code Editor instance on the C# Side.
     /// Calling methods on this object will effect the corresponding editor.
     /// </summary>
-    internal class CodeEditor
+    public class CodeEditor
     {
         private readonly MonacoInterop interop;
 
