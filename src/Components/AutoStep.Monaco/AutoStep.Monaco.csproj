@@ -5,14 +5,18 @@
         <RazorLangVersion>3.0</RazorLangVersion>
     </PropertyGroup>
 
-    <ItemGroup>
-        <_ContentIncludedByDefault Remove="libman.json" />
-    </ItemGroup>
-
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <Target Name="WebpackBuild" BeforeTargets="Build">

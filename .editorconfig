@@ -4,3 +4,12 @@
 [*]
 indent_style = space
 indent_size = 4
+
+# SA1200: Using directives should be placed correctly
+dotnet_diagnostic.SA1200.severity = none
+
+# SA1101: Use this.
+dotnet_diagnostic.SA1101.severity = none
+
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = suggestion

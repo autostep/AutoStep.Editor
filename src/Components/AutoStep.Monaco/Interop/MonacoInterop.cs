@@ -45,7 +45,7 @@ namespace AutoStep.Monaco.Interop
 
         public async ValueTask RegisterLanguageTokenizer(string languageId, string extension, ILanguageTokenizer tokenizer)
         {
-            await InvokeVoidAsync("registerLanguage", languageId, extension, DotNetObjectReference.Create(tokenizer));
+            await InvokeVoidAsync("registerLanguageTokenizer", languageId, extension, DotNetObjectReference.Create(tokenizer));
         }
 
         public async ValueTask SetModelMarkers(TextModel model, string owner, IEnumerable<MarkerData> markers)
@@ -73,4 +73,3 @@ namespace AutoStep.Monaco.Interop
         }
     }
 }
-

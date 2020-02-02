@@ -89,7 +89,7 @@ class MonacoInterop {
         this.models[uri] = modelContext;
     }
 
-    registerLanguage(languageId: string, extension: string, blazorCallback: IBlazorInteropObject)
+    registerLanguageTokenizer(languageId: string, extension: string, blazorCallback: IBlazorInteropObject)
     {
         languages.register({
             id: languageId,

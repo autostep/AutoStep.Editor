@@ -1,5 +1,6 @@
 ﻿@using  AutoStep.Monaco.Interop;
 @inject MonacoInterop MonacoInterop
+@inject ILogger<MonacoEditor> Logger
 
 <div @ref="monacoContainer" class="monaco-editor-container" />
 
@@ -30,12 +31,16 @@
   {
       if (firstRender)
       {
-          Console.WriteLine("First Render");
-
+          Logger.LogDebug("First Render");
+            
+          // On the first render, we'll ask our MonacoInterop class to create
+          // an editor in the specified container element.
           editor = await MonacoInterop.CreateEditor(monacoContainer);
 
-          Console.WriteLine("Editor Created");
+          Logger.LogDebug("Editor Created");
 
+          // Other state changes may have happened by the time we reach this
+          // point, so we'll set the model if there is one.
           if(currentTextModel is object)
           {
               await editor.SetModel(currentTextModel);
@@ -45,9 +50,10 @@
 
   protected override async Task OnParametersSetAsync()
   {
+      // Only change the loaded model if the file URI is different.
       if(Uri != lastUri)
       {
-          Console.WriteLine("Changing Model");
+          Logger.LogDebug("Changing Model");
           lastUri = Uri;
 
           if (currentTextModel is object)
@@ -84,7 +90,7 @@
 
           if(currentMarkers != ModelMarkers)
           {
-              Console.WriteLine("Markers Changing");
+              Logger.LogDebug("Markers Changing");
               currentMarkers = ModelMarkers;
               await currentTextModel.SetMarkers(null, currentMarkers);
           }
