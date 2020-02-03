@@ -2,6 +2,9 @@
 import { IBlazorInteropObject } from './IBlazorInteropObject';
 import { TextModelEventHandler } from './TextModelEventHandler';
 
+/**
+ * Context structure for a text model.
+ */
 export interface ITextModelContext {
     textModel: editor.ITextModel;
     updating: boolean;

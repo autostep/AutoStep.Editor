@@ -1,9 +1,16 @@
 import { IBlazorInteropObject } from './IBlazorInteropObject';
 import { languages } from 'monaco-editor/esm/vs/editor/editor.api';
 
+/**
+ * AutoStep token state consists solely of a number.
+ */
 class AutoStepTokenState implements languages.IState {
     tokenState: number;
 
+    /**
+     * Create a new token state.
+     * @param state State value.
+     */
     constructor(state: number) {
         this.tokenState = state;
     }
@@ -21,6 +28,9 @@ class AutoStepTokenState implements languages.IState {
     }
 }
 
+/**
+ *  Implementation of the Monaco Token Provider.
+ */
 export class AutoStepTokenProvider implements languages.TokensProvider {
     private callback: IBlazorInteropObject;
 
@@ -36,6 +46,7 @@ export class AutoStepTokenProvider implements languages.TokensProvider {
 
         if (state instanceof AutoStepTokenState)
         {
+            // Invoke the .NET method.
             var result: any = this.callback.invokeMethod("Tokenize", line, state.tokenState);
 
             return { tokens: result.tokens, endState: new AutoStepTokenState(result.endState) };

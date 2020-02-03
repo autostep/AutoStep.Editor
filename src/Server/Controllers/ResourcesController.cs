@@ -1,9 +1,5 @@
 ﻿using AutoStep.Editor.Shared;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutoStep.Editor.Server.Controllers
 {
@@ -17,7 +13,7 @@ namespace AutoStep.Editor.Server.Controllers
             return new CodeResource
             {
                 Name = sourceName,
-                Body = TestResources.TestFile
+                Body = TestResources.TestFile,
             };
         }
     }

@@ -6,19 +6,40 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor.Fluxor" Version="1.3.2-dotnet3.1.0-preview4.19579.2" />
+    <PackageReference Include="Blazor.Fluxor" Version="1.4.0" />
     <PackageReference Include="AutoStep" Version="1.0.0-ci.108" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="3.2.0-preview1.20073.1" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="3.2.0-preview1.20073.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.2.0-preview1.20073.1" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.2.0-preview1.20073.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />    
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Components\AutoStep.Monaco\AutoStep.Monaco.csproj">
       <Private></Private>
     </ProjectReference>
     <ProjectReference Include="..\Shared\AutoStep.Editor.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="LogMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LogMessages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="LogMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LogMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

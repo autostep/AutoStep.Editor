@@ -11,7 +11,11 @@
 @if (currentFile is object)
 {
     Console.WriteLine("Rendering Inner Window");
-<MonacoEditor Uri="@currentFile.FileUri.ToString()" Value="@currentFile.Source.OriginalBody" ModelMarkers="currentMarkers" OnModelChanged="m => CodeChangedHandler(m.CurrentValue)" LanguageId="autostep" />
+<MonacoEditor Uri="@currentFile.FileUri" 
+              Value="@currentFile.Source.OriginalBody" 
+              ModelMarkers="currentMarkers" 
+              OnModelChanged="m => CodeChangedHandler(m.CurrentValue)" 
+              LanguageId="autostep" />
 }
 
 @code

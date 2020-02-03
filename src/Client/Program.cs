@@ -1,24 +1,30 @@
-﻿using AutoStep.Compiler;
-using AutoStep.Editor.Client.Language;
+﻿using System.Threading.Tasks;
 using AutoStep.Monaco;
 using Blazor.Fluxor;
 using Microsoft.AspNetCore.Blazor.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace AutoStep.Editor.Client
 {
-    public class Program
+    /// <summary>
+    /// Entry point for the client application.
+    /// </summary>
+    public static class Program
     {
+        /// <summary>
+        /// Entry method.
+        /// </summary>
+        /// <param name="args">Start arguments.</param>
+        /// <returns>Completion task.</returns>
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
             builder.Services.AddFluxor(options =>
-                options.UseDependencyInjection(typeof(Program).Assembly)
-            );
+                options.UseDependencyInjection(typeof(Program).Assembly));
 
+            // Add dependencies for the AutoStep.Monaco component.
             builder.Services.AddMonaco();
 
             builder.Services.AddLogging(cfg => cfg.SetMinimumLevel(LogLevel.Debug));
