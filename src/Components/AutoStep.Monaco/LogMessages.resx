@@ -117,13 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppReducer_Reduce" xml:space="preserve">
-    <value>Reduce: {0}</value>
+  <data name="MonacoInterop_InvokeAsync" xml:space="preserve">
+    <value>InvokeAsync: {0}</value>
   </data>
-  <data name="AutoStepTokenizer_TokenizeError" xml:space="preserve">
-    <value>Tokenisation Error</value>
-  </data>
-  <data name="AutoStepTokenizer_TokenizeStart" xml:space="preserve">
-    <value>Tokenise Start in State {0}: {1}</value>
+  <data name="MonacoInterop_InvokeAsyncVoid" xml:space="preserve">
+    <value>InvokeAsyncVoid: {0}</value>
   </data>
 </root>

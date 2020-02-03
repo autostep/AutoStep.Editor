@@ -1,12 +1,16 @@
-﻿using AutoStep.Editor.Client.Language;
-using Blazor.Fluxor;
+﻿using Blazor.Fluxor;
 
 namespace AutoStep.Editor.Client.Store.App
 {
-    public class AppFeature : Feature<AppState>
+    /// <summary>
+    /// Top-level Application Feature.
+    /// </summary>
+    internal class AppFeature : Feature<AppState>
     {
+        /// <inheritdoc/>
         public override string GetName() => "App";
 
+        /// <inheritdoc/>
         protected override AppState GetInitialState() => new AppState();
     }
 }

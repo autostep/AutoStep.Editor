@@ -6,6 +6,7 @@ import { TextModelEventHandler } from './TextModelEventHandler';
 import { IBlazorInteropObject } from './IBlazorInteropObject';
 import { AutoStepTokenProvider } from './AutoStepTokenProvider';
 
+// Initialise the Monaco Environment with the relative URL.
 // @ts-ignore
 self.MonacoEnvironment = {
     getWorkerUrl: function (moduleId, label) {
@@ -13,13 +14,23 @@ self.MonacoEnvironment = {
     }
 };
 
+/**
+ * Monaco Interop TypeScript
+ * */
 class MonacoInterop {
 
+    /**
+     * Set of created editors
+     */
     private editors: { [id: string]: IEditorContext } = {};
+    /**
+     * Set of created text models
+     */
     private models: { [uri: string]: ITextModelContext } = {};
     
     constructor()
     {
+        // Set up my custom there (I may move this later)
         editor.defineTheme('autostep', {
             base: 'vs',
             inherit: true,
@@ -37,9 +48,14 @@ class MonacoInterop {
         editor.setTheme('autostep');
     }
 
-    createEditor(id: string, container: HTMLElement, themeId: string, blazorCallback: IBlazorInteropObject) {
-        console.log("createEditor");
-
+    /**
+     * Create an editor control.
+     * @param id The id of the control (to reference it later)
+     * @param container The HTML Element container.
+     * @param blazorCallback An object on which to invoke event methods.
+     */
+    createEditor(id: string, container: HTMLElement, blazorCallback: IBlazorInteropObject) {
+        
         var newEditor = editor.create(container);
 
         var editorContext: IEditorContext = {
@@ -53,6 +69,13 @@ class MonacoInterop {
         this.editors[id] = editorContext;
     }
 
+    /**
+     * Create a new text model.
+     * @param uri The URI of the model.
+     * @param value The content of the model.
+     * @param blazorCallback An object on which to call event handling methods.
+     * @param language The ID of the model's language.
+     */
     createTextModel(uri: string, value: string, blazorCallback: IBlazorInteropObject, language?: string)
     {
         var monacoUri = Uri.parse(uri);
@@ -89,23 +112,30 @@ class MonacoInterop {
         this.models[uri] = modelContext;
     }
 
-    registerLanguageTokenizer(languageId: string, extension: string, blazorCallback: IBlazorInteropObject)
+    /**
+     * Register a language and associated tokeniser.
+     * @param languageId The language ID.
+     * @param extension The file extension.
+     * @param tokenizer The tokenizer.
+     */
+    registerLanguageTokenizer(languageId: string, extension: string, tokenizer: IBlazorInteropObject)
     {
         languages.register({
             id: languageId,
             extensions: [extension]
         });
 
-        var tokenProvider = new AutoStepTokenProvider(blazorCallback);
+        var tokenProvider = new AutoStepTokenProvider(tokenizer);
 
         languages.setTokensProvider(languageId, tokenProvider);
     }
 
-    registerTokenTheme(themeId: string, rulesJson: string)
-    {
-        var rules : any[] = JSON.parse(rulesJson);
-    }
-
+    /**
+     * Set the model markers for a text model.
+     * @param textModelUri The URI of the text model.
+     * @param owner The owner of the markers.
+     * @param markers The full set of new markers for the model.
+     */
     setModelMarkers(textModelUri: string, owner: string, markers: editor.IMarkerData[])
     {
         var modelCtxt = this.models[textModelUri];
@@ -122,6 +152,11 @@ class MonacoInterop {
         unsafeModel._tokenization._resetTokenizationState();
     }
 
+    /**
+     * Sets the content for a model.
+     * @param textModelUri The text model URI.
+     * @param newContent The new content of the model.
+     */
     setModelContent(textModelUri: string, newContent: string)
     {
         var modelCtxt = this.models[textModelUri];
@@ -133,6 +168,11 @@ class MonacoInterop {
         modelCtxt.textModel.setValue(newContent);
     }
 
+    /**
+     * Change the model an editor is displaying.
+     * @param editorId The ID of the editor.
+     * @param textModelUri The URI of the text model.
+     */
     setEditorModel(editorId: string, textModelUri: string)
     {
         var editorCtxt = this.editors[editorId];

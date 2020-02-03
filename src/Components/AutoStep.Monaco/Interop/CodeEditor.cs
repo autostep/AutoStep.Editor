@@ -34,7 +34,12 @@ namespace AutoStep.Monaco.Interop
         /// <returns>A completion task.</returns>
         public async ValueTask SetModel(TextModel model)
         {
-            await interop.InvokeVoidAsync("setEditorModel", Id, model.Uri);
+            if (model is null)
+            {
+                throw new System.ArgumentNullException(nameof(model));
+            }
+
+            await interop.InvokeVoidAsync("setEditorModel", Id, model.Uri.ToString());
         }
     }
 }

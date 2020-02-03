@@ -13,3 +13,15 @@ dotnet_diagnostic.SA1101.severity = none
 
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = suggestion
+
+# CA1040: Avoid empty interfaces
+dotnet_diagnostic.CA1040.severity = none
+
+# SA1633: File should have header
+dotnet_diagnostic.SA1633.severity = none
+
+# CA1812: Internal class not instantiated (reflection does a lot of that).
+dotnet_diagnostic.CA1812.severity = none
+
+# CA1822: Does not access instance data, should be marked as static (in MVC world controller methods violate this rule)
+dotnet_diagnostic.CA1822.severity = none

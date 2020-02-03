@@ -19,6 +19,23 @@
         </PackageReference>
     </ItemGroup>
 
+
+    <ItemGroup>
+      <Compile Update="LogMessages.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>LogMessages.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <EmbeddedResource Update="LogMessages.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>LogMessages.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
     <Target Name="WebpackBuild" BeforeTargets="Build">
         <Exec Command="npm install" />
         <Exec Command="npm run build-dev" Condition="$(Configuration) == 'Debug'" />

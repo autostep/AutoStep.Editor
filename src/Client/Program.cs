@@ -22,9 +22,9 @@ namespace AutoStep.Editor.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
             builder.Services.AddFluxor(options =>
-                options.UseDependencyInjection(typeof(Program).Assembly)
-            );
+                options.UseDependencyInjection(typeof(Program).Assembly));
 
+            // Add dependencies for the AutoStep.Monaco component.
             builder.Services.AddMonaco();
 
             builder.Services.AddLogging(cfg => cfg.SetMinimumLevel(LogLevel.Debug));

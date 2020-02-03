@@ -46,7 +46,7 @@ namespace AutoStep.Editor.Client.Language
         /// <param name="state">The previous state of the tokeniser, as returned by the last call to this method.</param>
         /// <returns>The result of tokenisation.</returns>
         [JSInvokable]
-        public TokenizeResult Tokenize(string line, int state)
+        public LineTokens Tokenize(string line, int state)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace AutoStep.Editor.Client.Language
                 var tokenArray = tokenised.Tokens.Select(x =>
                     new LanguageToken(x.StartPosition, TokenScopes.GetScopeText(x.Category, x.SubCategory)));
 
-                return new TokenizeResult((int)tokenised.EndState, tokenArray);
+                return new LineTokens((int)tokenised.EndState, tokenArray);
             }
             catch (Exception ex)
             {

@@ -9,11 +9,11 @@
   private ElementReference monacoContainer;
   private CodeEditor editor;
   private TextModel currentTextModel;
-  private string lastUri;
+  private Uri lastUri;
   private IEnumerable<MarkerData> currentMarkers;
 
   [Parameter]
-  public string Uri { get; set; }
+  public Uri Uri { get; set; }
 
   [Parameter]
   public string Value { get; set; }
@@ -84,7 +84,6 @@
           // Change the model content.
           if(Value != currentTextModel.InitialValue)
           {
-              currentTextModel.InitialValue = Value;
               await currentTextModel.SetContent(Value);
           }
 

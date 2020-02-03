@@ -1,5 +1,8 @@
 import { IBlazorInteropObject } from './IBlazorInteropObject';
 
+/**
+ * Text model event handler.
+ */
 export class TextModelEventHandler {
     eventSink: IBlazorInteropObject;
 

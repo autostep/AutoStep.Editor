@@ -1,21 +1,33 @@
-﻿using AutoStep.Editor.Client.Store.CodeWindow;
+﻿using System;
+using AutoStep.Editor.Client.Store.CodeWindow;
 using Blazor.Fluxor;
-using System;
+using Microsoft.Extensions.Logging;
 
 namespace AutoStep.Editor.Client.Store.App
 {
-    public class AppReducer : Reducer<AppState, IAutoStepAction>
+    /// <summary>
+    /// Reducer for the top-level application state. Does composite model reduction by referencing other reducers.
+    /// </summary>
+    internal class AppReducer : Reducer<AppState, IAutoStepAction>
     {
         private readonly CodeWindowReducer codeWindowReducer;
+        private readonly ILogger<AppReducer> logger;
 
-        public AppReducer(CodeWindowReducer codeWindowReducer)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AppReducer"/> class.
+        /// </summary>
+        /// <param name="codeWindowReducer">The code window reducer.</param>
+        /// <param name="logger">A logger.</param>
+        public AppReducer(CodeWindowReducer codeWindowReducer, ILogger<AppReducer> logger)
         {
             this.codeWindowReducer = codeWindowReducer;
+            this.logger = logger;
         }
 
+        /// <inheritdoc/>
         public override AppState Reduce(AppState state, IAutoStepAction action)
         {
-            Console.WriteLine("Reducer:" + action.GetType().ToString());
+            logger.LogTrace(LogMessages.AppReducer_Reduce, action.GetType().ToString());
 
             return action switch
             {

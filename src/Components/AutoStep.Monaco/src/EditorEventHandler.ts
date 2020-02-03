@@ -1,5 +1,8 @@
 import { IBlazorInteropObject } from './IBlazorInteropObject';
 
+/**
+ * Editor Event Handler.
+ */
 export class EditorEventHandler {
     eventSink: IBlazorInteropObject;
 

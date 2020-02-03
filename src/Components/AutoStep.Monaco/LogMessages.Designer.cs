@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AutoStep.Editor.Client {
+namespace AutoStep.Monaco {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace AutoStep.Editor.Client {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AutoStep.Editor.Client.LogMessages", typeof(LogMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AutoStep.Monaco.LogMessages", typeof(LogMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,29 +61,20 @@ namespace AutoStep.Editor.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reduce: {0}.
+        ///   Looks up a localized string similar to InvokeAsync: {0}.
         /// </summary>
-        internal static string AppReducer_Reduce {
+        internal static string MonacoInterop_InvokeAsync {
             get {
-                return ResourceManager.GetString("AppReducer_Reduce", resourceCulture);
+                return ResourceManager.GetString("MonacoInterop_InvokeAsync", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tokenisation Error.
+        ///   Looks up a localized string similar to InvokeAsyncVoid: {0}.
         /// </summary>
-        internal static string AutoStepTokenizer_TokenizeError {
+        internal static string MonacoInterop_InvokeAsyncVoid {
             get {
-                return ResourceManager.GetString("AutoStepTokenizer_TokenizeError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tokenise Start in State {0}: {1}.
-        /// </summary>
-        internal static string AutoStepTokenizer_TokenizeStart {
-            get {
-                return ResourceManager.GetString("AutoStepTokenizer_TokenizeStart", resourceCulture);
+                return ResourceManager.GetString("MonacoInterop_InvokeAsyncVoid", resourceCulture);
             }
         }
     }
