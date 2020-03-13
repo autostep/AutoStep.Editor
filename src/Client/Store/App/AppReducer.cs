@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using AutoStep.Editor.Client.Language;
 using AutoStep.Editor.Client.Store.CodeWindow;
+using AutoStep.Editor.Client.Store.FileView;
+using AutoStep.Projects;
 using Blazor.Fluxor;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +15,6 @@ namespace AutoStep.Editor.Client.Store.App
     /// </summary>
     internal class AppReducer : Reducer<AppState, IAutoStepAction>
     {
-        private readonly CodeWindowReducer codeWindowReducer;
         private readonly ILogger<AppReducer> logger;
 
         /// <summary>
@@ -18,9 +22,8 @@ namespace AutoStep.Editor.Client.Store.App
         /// </summary>
         /// <param name="codeWindowReducer">The code window reducer.</param>
         /// <param name="logger">A logger.</param>
-        public AppReducer(CodeWindowReducer codeWindowReducer, ILogger<AppReducer> logger)
+        public AppReducer(ILogger<AppReducer> logger)
         {
-            this.codeWindowReducer = codeWindowReducer;
             this.logger = logger;
         }
 
@@ -31,11 +34,32 @@ namespace AutoStep.Editor.Client.Store.App
 
             return action switch
             {
-                SwitchProjectAction changeProjectAction => new AppState(changeProjectAction.NewProject, state.CodeWindow),
-                ProjectCompiledAction compiled => new AppState(state.Project, codeWindowReducer.Reduce(state.CodeWindow, compiled)),
-                ICodeWindowAction codeWindowAction => new AppState(state.Project, codeWindowReducer.Reduce(state.CodeWindow, codeWindowAction)),
-                _ => new AppState(state.Project, state.CodeWindow)
+                OpenFileAction openFileAction => OpenFile(state, openFileAction),
+                SwitchProjectAction changeProjectAction =>
+                    new AppState(
+                        changeProjectAction.NewProject,
+                        ImmutableDictionary<string, ProjectFileState>.Empty,
+                        ImmutableDictionary<Guid, FileViewState>.Empty),
+                //ProjectCompiledAction compiled => state,
+                //ICodeWindowAction codeWindowAction => new AppState(state.Project, codeWindowReducer.Reduce(state.CodeWindow, codeWindowAction)),
+                _ => state
             };
+        }
+
+        private AppState OpenFile(AppState state, OpenFileAction openFileAction)
+        {
+            var fileViewState = new FileViewState(Guid.NewGuid(), openFileAction.FileId);
+
+            var fileState = new ProjectFileState(
+                                new Uri($"file://{openFileAction.FileId}"),
+                                state.Project.AllFiles[openFileAction.FileId],
+                                state.Project.AllFiles[openFileAction.FileId].ContentSource as ProjectFileSource,
+                                false);
+
+            return new AppState(
+                        state.Project,
+                        state.Files.Add(openFileAction.FileId, fileState),
+                        state.FileViews.Add(fileViewState.Id, fileViewState));
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using AutoStep.Editor.Client.Store.CodeWindow;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using AutoStep.Editor.Client.Store.CodeWindow;
 using AutoStep.Projects;
 
 namespace AutoStep.Editor.Client.Store.App
@@ -13,7 +16,8 @@ namespace AutoStep.Editor.Client.Store.App
         /// </summary>
         public AppState()
         {
-            CodeWindow = new CodeWindowState(null, false);
+            FileViews = ImmutableDictionary<Guid, FileViewState>.Empty;
+            Files = ImmutableDictionary<string, ProjectFileState>.Empty;
             Project = null;
         }
 
@@ -21,17 +25,20 @@ namespace AutoStep.Editor.Client.Store.App
         /// Initializes a new instance of the <see cref="AppState"/> class.
         /// </summary>
         /// <param name="project">The project.</param>
-        /// <param name="codeWindowState">The code window state.</param>
-        public AppState(Project project, CodeWindowState codeWindowState)
+        /// <param name="fileViews">The set of file views.</param>
+        public AppState(Project project, ImmutableDictionary<string, ProjectFileState> fileState, ImmutableDictionary<Guid, FileViewState> fileViews)
         {
+            FileViews = fileViews;
+            Files = fileState;
             Project = project;
-            CodeWindow = codeWindowState;
         }
 
         /// <summary>
         /// Gets the code window.
         /// </summary>
-        public CodeWindowState CodeWindow { get; }
+        public ImmutableDictionary<Guid, FileViewState> FileViews { get; }
+
+        public ImmutableDictionary<string, ProjectFileState> Files { get; }
 
         /// <summary>
         /// Gets the currently active project.

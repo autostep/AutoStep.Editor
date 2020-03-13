@@ -15,10 +15,12 @@ namespace AutoStep.Editor.Client.Store.App
         /// <param name="fileUri">The URI of the file.</param>
         /// <param name="file">The file.</param>
         /// <param name="source">The file source.</param>
-        public ProjectFileState(Uri fileUri, ProjectFile file, ProjectFileSource source)
+        /// <param name="isLoading">Is the file loading?</param>
+        public ProjectFileState(Uri fileUri, ProjectFile file, ProjectFileSource source, bool isLoading)
         {
             File = file;
             Source = source;
+            IsLoading = isLoading;
             FileUri = fileUri;
         }
 
@@ -36,5 +38,10 @@ namespace AutoStep.Editor.Client.Store.App
         /// Gets the URI for the file.
         /// </summary>
         public Uri FileUri { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the file is loading.
+        /// </summary>
+        public bool IsLoading { get; }
     }
 }

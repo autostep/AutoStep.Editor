@@ -11,26 +11,30 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
     internal class CodeChangeEffect : Effect<CodeChangeAction>
     {
         private readonly ILoggerFactory logFactory;
+        private readonly IState<AppState> state;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CodeChangeEffect"/> class.
         /// </summary>
         /// <param name="logFactory">The logger facotry.</param>
-        public CodeChangeEffect(ILoggerFactory logFactory)
+        public CodeChangeEffect(ILoggerFactory logFactory, IState<AppState> state)
         {
             this.logFactory = logFactory;
+            this.state = state;
         }
 
         /// <inheritdoc/>
         protected override async Task HandleAsync(CodeChangeAction action, IDispatcher dispatcher)
         {
+            var file = state.Value.Files[action.FileId];
+
             // Update the local version of the 'body'.
-            action.File.Source.UpdateLocalBody(action.Body);
+            file.Source.UpdateLocalBody(action.Body);
 
             // Initiate compilation and linking.
             var projectCompiler = action.Project.Compiler;
 
-            await projectCompiler.Compile(logFactory);
+            await projectCompiler.CompileAsync(logFactory);
 
             projectCompiler.Link();
 

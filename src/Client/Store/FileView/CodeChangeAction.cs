@@ -14,10 +14,10 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
         /// <param name="project">The project.</param>
         /// <param name="file">The file.</param>
         /// <param name="body">The new file content.</param>
-        public CodeChangeAction(Project project, ProjectFileState file, string body)
+        public CodeChangeAction(Project project, string fileId, string body)
         {
             Project = project;
-            File = file;
+            FileId = fileId;
             Body = body;
         }
 
@@ -29,7 +29,7 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
         /// <summary>
         /// Gets the file.
         /// </summary>
-        public ProjectFileState File { get; }
+        public string FileId { get; }
 
         /// <summary>
         /// Gets the new content of the file.

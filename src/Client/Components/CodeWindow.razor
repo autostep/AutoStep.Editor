@@ -1,5 +1,8 @@
 ﻿@using Monaco.Interop
-@using AutoStep.Compiler
+@using AutoStep.Language
+@using AutoStep.Projects
+@using AutoStep.Language.Test
+
 @using AutoStep.Editor.Client.Language
 @inherits Blazor.Fluxor.Components.FluxorComponent
 @implements IDisposable
@@ -8,25 +11,33 @@
 @inject MonacoInterop Monaco
 @inject Microsoft.Extensions.Logging.ILoggerFactory LogFactory
 
-@if (currentFile is object)
+@{ 
+  var fileViewState = State.Value.FileViews[ViewStateId];
+  var fileState = State.Value.Files[fileViewState.FileId];
+
+  var langId = fileState.File is ProjectInteractionFile ? "autostep-interaction" : "autostep";
+}
+
+@if (fileState is object)
 {
     Console.WriteLine("Rendering Inner Window");
-<MonacoEditor Uri="@currentFile.FileUri" 
-              Value="@currentFile.Source.OriginalBody" 
-              ModelMarkers="currentMarkers" 
-              OnModelChanged="m => CodeChangedHandler(m.CurrentValue)" 
-              LanguageId="autostep" />
+    <MonacoEditor Uri="@fileState.FileUri"
+                  Value="@fileState.Source.OriginalBody"
+                  ModelMarkers="currentMarkers"
+                  OnModelChanged="m => CodeChangedHandler(m.CurrentValue)"
+                  LanguageId="@langId" />
 }
 
 @code
-{
-  private ProjectFileState currentFile;
-  private FileCompilerResult compileResult;
-  private LinkResult linkResult;
+{ 
+  private LanguageOperationResult lastPrimary;
+  private LanguageOperationResult lastSecondary;
   private IEnumerable<MarkerData> currentMarkers = Enumerable.Empty<MarkerData>();
   private static bool hasInitialisedLanguage;
 
-  private static MarkerData GetMarkerDataFromMessage(CompilerMessage msg)
+  public Guid ViewStateId { get; set; }
+
+  private static MarkerData GetMarkerDataFromMessage(AutoStep.Language.LanguageOperationMessage msg)
   {
       var severity = msg.Level switch
       {
@@ -61,6 +72,7 @@
           var project = State.Value.Project;
 
           await Monaco.RegisterLanguageTokenizer("autostep", ".as", new AutoStepTokenizer(project.Compiler, LogFactory));
+          await Monaco.RegisterLanguageTokenizer("autostep-interaction", ".asi", new AutoStepInteractionTokenizer(project.Compiler, LogFactory));
       }
 
       await base.OnInitializedAsync();
@@ -77,36 +89,44 @@
   {
       Console.WriteLine("State Change");
 
-      if (currentFile != state.CodeWindow.DisplayedFile)
-      {
-          currentFile = state.CodeWindow.DisplayedFile;
-          currentMarkers = Enumerable.Empty<MarkerData>();
+      LanguageOperationResult newPrimary = null;
+      LanguageOperationResult newSecondary = null;
+      
+      var fileViewState = state.FileViews[ViewStateId];
+      var fileState = state.Files[fileViewState.FileId];
+      var file = fileState.File;
 
-          StateHasChanged();
+      if(file is AutoStep.Projects.ProjectInteractionFile interactionFile)
+      {
+          newPrimary = interactionFile.LastCompileResult;
+          newSecondary = interactionFile.LastSetBuildResult;
+      }
+      else if(file is AutoStep.Projects.ProjectTestFile testFile)
+      {
+          newPrimary = testFile.LastCompileResult;
+          newSecondary = testFile.LastLinkResult;
       }
 
-      Console.WriteLine("Compile TimeStamp: {0}", currentFile?.File.LastCompileTime);
-
-      if (currentFile?.File.LastCompileResult != compileResult || currentFile?.File.LastLinkResult != linkResult)
+      if (newPrimary != lastPrimary || newSecondary != lastSecondary)
       {
           Console.WriteLine("Regenerating Messages");
 
-          compileResult = currentFile.File.LastCompileResult;
-          linkResult = currentFile.File.LastLinkResult;
+          lastPrimary = newPrimary;
+          lastSecondary = newSecondary;
 
-          IEnumerable<CompilerMessage> messages;
+          IEnumerable<LanguageOperationMessage> messages;
 
-          if (compileResult is null)
+          if (lastPrimary is null)
           {
-              messages = Enumerable.Empty<CompilerMessage>();
+              messages = Enumerable.Empty<LanguageOperationMessage>();
           }
           else
           {
-              messages = compileResult.Messages;
+              messages = lastPrimary.Messages;
 
-              if (linkResult is object)
+              if (lastSecondary is object)
               {
-                  messages = messages.Concat(linkResult.Messages);
+                  messages = messages.Concat(lastSecondary.Messages);
               }
           }
 
@@ -117,7 +137,9 @@
   }
 
   public void CodeChangedHandler(string newCode)
-  {
-      Dispatcher.Dispatch(new CodeChangeAction(State.Value.Project, State.Value.CodeWindow.DisplayedFile, newCode));
+  {   
+      var fileViewState = State.Value.FileViews[ViewStateId];
+
+      Dispatcher.Dispatch(new CodeChangeAction(State.Value.Project, fileViewState.FileId, newCode));
   }
 }

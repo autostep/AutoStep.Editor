@@ -1,6 +1,4 @@
 ﻿@page "/"
-@using Store
-@using AutoStep.Definitions
 @using AutoStep.Projects;
 @using AutoStep.Editor.Client.Language
 @inherits Blazor.Fluxor.Components.FluxorComponent
@@ -9,11 +7,17 @@
 @inject HttpClient Http
 
 <div class="flex-grow-1">
-    @{ Console.WriteLine("Rendering Index"); }
     @if (State.Value.Project is object)
     {
-        Console.WriteLine("Rendering Window");
-        <CodeWindow />
+        <MatTabGroup>
+            @foreach(var item in State.Value.FileViews)
+            {
+                var file = State.Value.Files[item.Value.FileId];
+                <MatTab Label="@file.File.Path" @key="item.Key">
+                    <CodeWindow ViewStateId="@item.Key" />
+                </MatTab>
+            }
+        </MatTabGroup>
     }
 </div>
 
@@ -26,22 +30,16 @@
       // Create a project.
       var project = new Project();
 
-      // Create a default file.
-      var fileSource = new ProjectFileSource(Http, "testfile.as");
+      // Add our interactions file
+      var interactionFileSource = new ProjectFileSource(Http, "Interactions.asi");
+      var interactionFile = new ProjectInteractionFile("Interactions.asi", interactionFileSource);
 
-      var projectFile = new ProjectFile("testfile.as", fileSource);
+      var testFileSource = new ProjectFileSource(Http, "testfile.as");
+      var testFile = new ProjectTestFile("testfile.as", testFileSource);
 
-      project.TryAddFile(projectFile);
+      project.TryAddFile(interactionFile);
+      project.TryAddFile(testFile);
 
-      var defaultFileState = new ProjectFileState(new Uri("file://testfile.as"), projectFile, fileSource);
-
-      var callbackSource = new CallbackDefinitionSource();
-
-      callbackSource.Given("I have entered {arg1} into {arg2}", () => { });
-      callbackSource.Given("I have selected {type} in the {name} dropdown", () => { });
-
-      project.Compiler.AddStaticStepDefinitionSource(callbackSource);
-
-      Dispatcher.Dispatch(new SwitchProjectAction(project, defaultFileState));
+      Dispatcher.Dispatch(new SwitchProjectAction(project));
   }
 }

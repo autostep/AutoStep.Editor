@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using AutoStep.Language.Test.LineTokeniser;
 using AutoStep.Monaco.Interop;
 using AutoStep.Projects;
 using Microsoft.Extensions.Logging;
@@ -14,17 +13,17 @@ namespace AutoStep.Editor.Client.Language
     /// the AutoStep line tokeniser to generate a set of tokens. We then convert those into scope tags
     /// before passing them back to the TypeScript.
     /// </summary>
-    public class AutoStepTokenizer : ILanguageTokenizer
+    public class AutoStepInteractionTokenizer : ILanguageTokenizer
     {
         private readonly IProjectCompiler projectCompiler;
         private readonly ILogger logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AutoStepTokenizer"/> class.
+        /// Initializes a new instance of the <see cref="AutoStepInteractionTokenizer"/> class.
         /// </summary>
         /// <param name="projectCompiler">The current project compiler.</param>
         /// <param name="logFactory">The logger factory.</param>
-        public AutoStepTokenizer(IProjectCompiler projectCompiler, ILoggerFactory logFactory)
+        public AutoStepInteractionTokenizer(IProjectCompiler projectCompiler, ILoggerFactory logFactory)
         {
             this.projectCompiler = projectCompiler;
             this.logger = logFactory.CreateLogger<AutoStepTokenizer>();
@@ -51,12 +50,10 @@ namespace AutoStep.Editor.Client.Language
         {
             try
             {
-                var castState = (LineTokeniserState)state;
-
-                logger.LogTrace(LogMessages.AutoStepTokenizer_TokenizeStart, castState, line);
+                logger.LogTrace(LogMessages.AutoStepTokenizer_TokenizeStart, state, line);
 
                 // Use the project compiler (in the core library) to tokenise.
-                var tokenised = projectCompiler.TokeniseTestLine(line, castState);
+                var tokenised = projectCompiler.TokeniseInteractionLine(line, state);
 
                 var tokenArray = tokenised.Tokens.Select(x =>
                     new LanguageToken(x.StartPosition, TokenScopes.GetScopeText(x.Category, x.SubCategory)));

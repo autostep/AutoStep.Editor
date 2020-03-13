@@ -2,8 +2,8 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoStep.Compiler;
 using AutoStep.Editor.Shared;
+using AutoStep.Language;
 using Microsoft.AspNetCore.Components;
 
 namespace AutoStep.Editor.Client.Language

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using AutoStep.Language;
 
 namespace AutoStep.Editor.Client.Language
 {

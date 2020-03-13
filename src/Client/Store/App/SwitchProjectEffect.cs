@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using AutoStep.Editor.Client.Store.CodeWindow;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using AutoStep.Editor.Client.Store.FileView;
 using Blazor.Fluxor;
 
 namespace AutoStep.Editor.Client.Store.App
@@ -11,8 +12,11 @@ namespace AutoStep.Editor.Client.Store.App
     {
         protected override Task HandleAsync(SwitchProjectAction action, IDispatcher dispatcher)
         {
-            // Just dispatch a change file action to load the default file.
-            dispatcher.Dispatch(new ChangeFileAction(action.NewProject, action.DefaultFile));
+            // Open all the files.
+            foreach (var item in action.NewProject.AllFiles)
+            {
+                dispatcher.Dispatch(new OpenFileAction(action.NewProject, item.Key));
+            }
 
             return Task.CompletedTask;
         }

@@ -1,22 +1,23 @@
 ﻿using AutoStep.Editor.Client.Store.App;
+using AutoStep.Editor.Client.Store.CodeWindow;
 using AutoStep.Projects;
 
-namespace AutoStep.Editor.Client.Store.CodeWindow
+namespace AutoStep.Editor.Client.Store.FileView
 {
     /// <summary>
     /// <see cref="ChangeFileEffect"/>.
     /// </summary>
-    internal class ChangeFileAction : ICodeWindowAction
+    internal class OpenFileAction : ICodeWindowAction
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChangeFileAction"/> class.
+        /// Initializes a new instance of the <see cref="OpenFileAction"/> class.
         /// </summary>
         /// <param name="project">The Project the file is in.</param>
         /// <param name="newFile">The new file.</param>
-        public ChangeFileAction(Project project, ProjectFileState newFile)
+        public OpenFileAction(Project project, string fileId)
         {
             Project = project;
-            NewFile = newFile;
+            FileId = fileId;
         }
 
         /// <summary>
@@ -27,6 +28,6 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
         /// <summary>
         /// Gets the new file to switch to.
         /// </summary>
-        public ProjectFileState NewFile { get; }
+        public string FileId { get; }
     }
 }

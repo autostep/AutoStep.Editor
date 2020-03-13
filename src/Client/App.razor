@@ -1,6 +1,4 @@
-﻿@using AutoStep.Editor.Client.Language
-@inject Blazor.Fluxor.IStore Store
-@Store.Initialize()
+﻿<Blazor.Fluxor.StoreInitializer />
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />

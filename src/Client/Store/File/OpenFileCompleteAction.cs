@@ -5,13 +5,13 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
     /// <summary>
     /// Action that occurs when the content of a file has loaded.
     /// </summary>
-    internal class LoadCodeCompleteAction : ICodeWindowAction
+    internal class OpenFileCompleteAction
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoadCodeCompleteAction"/> class.
+        /// Initializes a new instance of the <see cref="OpenFileCompleteAction"/> class.
         /// </summary>
         /// <param name="file">The file.</param>
-        public LoadCodeCompleteAction(ProjectFileState file)
+        public OpenFileCompleteAction(ProjectFileState file)
         {
             File = file;
         }
