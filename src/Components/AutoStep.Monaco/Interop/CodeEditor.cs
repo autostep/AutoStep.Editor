@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace AutoStep.Monaco.Interop
 {
@@ -32,14 +33,14 @@ namespace AutoStep.Monaco.Interop
         /// </summary>
         /// <param name="model">The text model to change to.</param>
         /// <returns>A completion task.</returns>
-        public async ValueTask SetModel(TextModel model)
+        public async ValueTask SetModel(Uri model)
         {
             if (model is null)
             {
                 throw new System.ArgumentNullException(nameof(model));
             }
 
-            await interop.InvokeVoidAsync("setEditorModel", Id, model.Uri.ToString());
+            await interop.InvokeVoidAsync("setEditorModel", Id, model.ToString());
         }
     }
 }

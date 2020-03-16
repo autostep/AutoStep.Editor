@@ -8,8 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazor.Fluxor" Version="2.0.0" />
-    <PackageReference Include="AutoStep" Version="1.0.0-interaction-line-tokenise.160" />
-    <PackageReference Include="MatBlazor" Version="2.2.0" />
+    <PackageReference Include="AutoStep" Version="1.0.0-develop.163" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="3.2.0-preview1.20073.1" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="3.2.0-preview1.20073.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.2.0-preview1.20073.1" />

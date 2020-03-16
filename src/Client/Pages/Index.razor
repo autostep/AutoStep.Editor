@@ -6,18 +6,16 @@
 @inject IDispatcher Dispatcher
 @inject HttpClient Http
 
-<div class="flex-grow-1">
+<div class="code-window-host">
     @if (State.Value.Project is object)
     {
-        <MatTabGroup>
             @foreach(var item in State.Value.FileViews)
             {
                 var file = State.Value.Files[item.Value.FileId];
-                <MatTab Label="@file.File.Path" @key="item.Key">
+                <div class="code-window-container">
                     <CodeWindow ViewStateId="@item.Key" />
-                </MatTab>
+                </div>
             }
-        </MatTabGroup>
     }
 </div>
 
@@ -36,6 +34,8 @@
 
       var testFileSource = new ProjectFileSource(Http, "testfile.as");
       var testFile = new ProjectTestFile("testfile.as", testFileSource);
+
+      project.Compiler.Interactions.AddMethods<DemoMethods>();
 
       project.TryAddFile(interactionFile);
       project.TryAddFile(testFile);

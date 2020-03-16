@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AutoStep.Editor.Client.Language;
 using AutoStep.Editor.Client.Store.FileView;
 using Blazor.Fluxor;
+using Microsoft.Extensions.Logging;
 
 namespace AutoStep.Editor.Client.Store.App
 {
@@ -10,7 +12,14 @@ namespace AutoStep.Editor.Client.Store.App
     /// </summary>
     internal class SwitchProjectEffect : Effect<SwitchProjectAction>
     {
-        protected override Task HandleAsync(SwitchProjectAction action, IDispatcher dispatcher)
+        private readonly CompilationService compilation;
+
+        public SwitchProjectEffect(CompilationService compilation)
+        {
+            this.compilation = compilation;
+        }
+
+        protected override async Task HandleAsync(SwitchProjectAction action, IDispatcher dispatcher)
         {
             // Open all the files.
             foreach (var item in action.NewProject.AllFiles)
@@ -18,7 +27,9 @@ namespace AutoStep.Editor.Client.Store.App
                 dispatcher.Dispatch(new OpenFileAction(action.NewProject, item.Key));
             }
 
-            return Task.CompletedTask;
+            await compilation.CompileAndLink(action.NewProject);
+
+            dispatcher.Dispatch(new ProjectCompiledAction(action.NewProject));
         }
     }
 }

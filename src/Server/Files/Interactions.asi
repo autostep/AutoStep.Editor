@@ -1,1 +1,29 @@
 ﻿
+Trait: named
+
+    locateNamed(name): needs-defining
+
+Trait: editable + named
+
+    Step: Given I have entered {value} into the {name} $component$
+        locateNamed(name) -> type(value)
+
+    type(value): needs-defining
+
+Trait: clickable + named
+
+    Step: Given I have clicked the {name} $component$
+        locateNamed(name) -> click()
+
+Component: field
+
+    traits: editable, named
+
+    locateNamed(name): select("input[name=<name>]")
+    type(value): internalType(value)
+
+Component: button
+
+    traits: clickable, named
+
+    locateNamed(name): select("button[name=<name>]")

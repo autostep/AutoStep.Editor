@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AutoStep.Editor.Client.Language;
 using AutoStep.Editor.Client.Store.App;
 using Blazor.Fluxor;
 using Microsoft.Extensions.Logging;
@@ -10,17 +11,17 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
     /// </summary>
     internal class CodeChangeEffect : Effect<CodeChangeAction>
     {
-        private readonly ILoggerFactory logFactory;
         private readonly IState<AppState> state;
+        private readonly CompilationService compilation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CodeChangeEffect"/> class.
         /// </summary>
         /// <param name="logFactory">The logger facotry.</param>
-        public CodeChangeEffect(ILoggerFactory logFactory, IState<AppState> state)
+        public CodeChangeEffect(IState<AppState> state, CompilationService compilation)
         {
-            this.logFactory = logFactory;
             this.state = state;
+            this.compilation = compilation;
         }
 
         /// <inheritdoc/>
@@ -32,11 +33,7 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
             file.Source.UpdateLocalBody(action.Body);
 
             // Initiate compilation and linking.
-            var projectCompiler = action.Project.Compiler;
-
-            await projectCompiler.CompileAsync(logFactory);
-
-            projectCompiler.Link();
+            await compilation.CompileAndLink(action.Project);
 
             dispatcher.Dispatch(new ProjectCompiledAction(action.Project));
         }

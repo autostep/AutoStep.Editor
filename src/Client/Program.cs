@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AutoStep.Editor.Client.Language;
 using AutoStep.Monaco;
 using Blazor.Fluxor;
 using Microsoft.AspNetCore.Blazor.Hosting;
@@ -26,6 +27,7 @@ namespace AutoStep.Editor.Client
 
             // Add dependencies for the AutoStep.Monaco component.
             builder.Services.AddMonaco();
+            builder.Services.AddSingleton<CompilationService>();
 
             builder.Services.AddLogging(cfg => cfg.SetMinimumLevel(LogLevel.Debug));
 

@@ -11,135 +11,56 @@
 @inject MonacoInterop Monaco
 @inject Microsoft.Extensions.Logging.ILoggerFactory LogFactory
 
-@{ 
-  var fileViewState = State.Value.FileViews[ViewStateId];
-  var fileState = State.Value.Files[fileViewState.FileId];
+@{
+    var fileViewState = State.Value.FileViews[ViewStateId];
+    var fileState = State.Value.Files[fileViewState.FileId];
 
-  var langId = fileState.File is ProjectInteractionFile ? "autostep-interaction" : "autostep";
+    var langId = fileState.File is ProjectInteractionFile ? "autostep-interaction" : "autostep";
 }
 
-@if (fileState is object)
+@if (fileState is object && !fileState.IsLoading)
 {
-    Console.WriteLine("Rendering Inner Window");
-    <MonacoEditor Uri="@fileState.FileUri"
-                  Value="@fileState.Source.OriginalBody"
-                  ModelMarkers="currentMarkers"
-                  OnModelChanged="m => CodeChangedHandler(m.CurrentValue)"
-                  LanguageId="@langId" />
+    <MonacoEditor Uri="@fileState.FileUri" />
+}
+else
+{
+    <MonacoEditor Uri="null" />
 }
 
 @code
-{ 
-  private LanguageOperationResult lastPrimary;
-  private LanguageOperationResult lastSecondary;
-  private IEnumerable<MarkerData> currentMarkers = Enumerable.Empty<MarkerData>();
-  private static bool hasInitialisedLanguage;
+{
+    private static bool hasInitialisedLanguage;
 
-  public Guid ViewStateId { get; set; }
+    [Parameter]
+    public Guid ViewStateId { get; set; }
 
-  private static MarkerData GetMarkerDataFromMessage(AutoStep.Language.LanguageOperationMessage msg)
-  {
-      var severity = msg.Level switch
-      {
-          CompilerMessageLevel.Error => MarkerSeverity.Error,
-          CompilerMessageLevel.Warning => MarkerSeverity.Warning,
-          _ => MarkerSeverity.Info
-      };
+    protected override async Task OnInitializedAsync()
+    {
+        if (!hasInitialisedLanguage)
+        {
+            hasInitialisedLanguage = true;
 
-      var endPosition = msg.EndColumn;
+            Console.WriteLine("Registering Language");
 
-      if(endPosition is null)
-      {
-          endPosition = msg.StartColumn;
-      }
-      else
-      {
-          endPosition++;
-      }
+            var project = State.Value.Project;
 
-      // Expand message end to the location after the token
-      return new MarkerData($"ASC{(int)msg.Code:D5}", msg.Message, severity, msg.StartColumn, msg.StartLineNo, endPosition.Value, msg.EndLineNo ?? msg.StartLineNo);
-  }
+            await Monaco.RegisterLanguageTokenizer("autostep", ".as", new AutoStepTokenizer(project.Compiler, LogFactory));
+            await Monaco.RegisterLanguageTokenizer("autostep-interaction", ".asi", new AutoStepInteractionTokenizer(project.Compiler, LogFactory));
+        }
 
-  protected override async Task OnInitializedAsync()
-  {
-      if (!hasInitialisedLanguage)
-      {
-          hasInitialisedLanguage = true;
+        await base.OnInitializedAsync();
 
-          Console.WriteLine("Registering Language");
+        State.StateChanged += OnStateChanged;
+    }
 
-          var project = State.Value.Project;
+    private void OnStateChanged(object sender, AppState newState)
+    {
+      StateHasChanged();
+    }
 
-          await Monaco.RegisterLanguageTokenizer("autostep", ".as", new AutoStepTokenizer(project.Compiler, LogFactory));
-          await Monaco.RegisterLanguageTokenizer("autostep-interaction", ".asi", new AutoStepInteractionTokenizer(project.Compiler, LogFactory));
-      }
-
-      await base.OnInitializedAsync();
-
-      State.StateChanged += StateChanged;
-  }
-
-  public void Dispose()
-  {
-      State.StateChanged -= StateChanged;
-  }
-
-  private void StateChanged(object sender, AppState state)
-  {
-      Console.WriteLine("State Change");
-
-      LanguageOperationResult newPrimary = null;
-      LanguageOperationResult newSecondary = null;
-      
-      var fileViewState = state.FileViews[ViewStateId];
-      var fileState = state.Files[fileViewState.FileId];
-      var file = fileState.File;
-
-      if(file is AutoStep.Projects.ProjectInteractionFile interactionFile)
-      {
-          newPrimary = interactionFile.LastCompileResult;
-          newSecondary = interactionFile.LastSetBuildResult;
-      }
-      else if(file is AutoStep.Projects.ProjectTestFile testFile)
-      {
-          newPrimary = testFile.LastCompileResult;
-          newSecondary = testFile.LastLinkResult;
-      }
-
-      if (newPrimary != lastPrimary || newSecondary != lastSecondary)
-      {
-          Console.WriteLine("Regenerating Messages");
-
-          lastPrimary = newPrimary;
-          lastSecondary = newSecondary;
-
-          IEnumerable<LanguageOperationMessage> messages;
-
-          if (lastPrimary is null)
-          {
-              messages = Enumerable.Empty<LanguageOperationMessage>();
-          }
-          else
-          {
-              messages = lastPrimary.Messages;
-
-              if (lastSecondary is object)
-              {
-                  messages = messages.Concat(lastSecondary.Messages);
-              }
-          }
-
-          currentMarkers = messages.Select(m => GetMarkerDataFromMessage(m));
-
-          StateHasChanged();
-      }
-  }
-
-  public void CodeChangedHandler(string newCode)
-  {   
-      var fileViewState = State.Value.FileViews[ViewStateId];
-
-      Dispatcher.Dispatch(new CodeChangeAction(State.Value.Project, fileViewState.FileId, newCode));
-  }
+    public void Dispose()
+    {
+        State.StateChanged -= OnStateChanged;
+    }
 }
+

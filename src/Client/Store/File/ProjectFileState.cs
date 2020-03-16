@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoStep.Editor.Client.Language;
+using AutoStep.Monaco.Interop;
 using AutoStep.Projects;
 
 namespace AutoStep.Editor.Client.Store.App
@@ -16,12 +17,14 @@ namespace AutoStep.Editor.Client.Store.App
         /// <param name="file">The file.</param>
         /// <param name="source">The file source.</param>
         /// <param name="isLoading">Is the file loading?</param>
-        public ProjectFileState(Uri fileUri, ProjectFile file, ProjectFileSource source, bool isLoading)
+        public ProjectFileState(Uri fileUri, ProjectFile file, ProjectFileSource source, bool isLoading, TextModel model, DateTime lastModelUpdate)
         {
             File = file;
             Source = source;
             IsLoading = isLoading;
             FileUri = fileUri;
+            TextModel = model;
+            LastModelUpdate = lastModelUpdate;
         }
 
         /// <summary>
@@ -43,5 +46,9 @@ namespace AutoStep.Editor.Client.Store.App
         /// Gets a value indicating whether the file is loading.
         /// </summary>
         public bool IsLoading { get; }
+
+        public TextModel TextModel { get; }
+
+        public DateTime LastModelUpdate { get; }
     }
 }

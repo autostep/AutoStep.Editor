@@ -20,15 +20,24 @@ namespace AutoStep.Editor.Server.Controllers
         [HttpGet("{**sourceName}")]
         public async Task<CodeResource> Get(string sourceName)
         {
-            var file = files.GetFileInfo(Path.Combine("Files", sourceName));
+            var file = files.GetFileInfo(sourceName);
 
-            using var streamReader = new StreamReader(file.CreateReadStream());
-
-            return new CodeResource
+            if (file.Exists)
             {
-                Name = sourceName,
-                Body = await streamReader.ReadToEndAsync(),
-            };
+                using var streamReader = new StreamReader(file.CreateReadStream());
+
+                return new CodeResource
+                {
+                    Name = sourceName,
+                    Body = await streamReader.ReadToEndAsync(),
+                };
+            }
+            else
+            {
+                Response.StatusCode = 404;
+
+                return null;
+            }
         }
     }
 }

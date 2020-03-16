@@ -35,13 +35,14 @@ namespace AutoStep.Editor.Client.Store.App
             return action switch
             {
                 OpenFileAction openFileAction => OpenFile(state, openFileAction),
+                OpenFileCompleteAction openFileCompleteAction => OpenFileComplete(state, openFileCompleteAction),
+                FileModelUpdateAction fileModelUpdateAction => FileModelUpdate(state, fileModelUpdateAction),
                 SwitchProjectAction changeProjectAction =>
                     new AppState(
                         changeProjectAction.NewProject,
                         ImmutableDictionary<string, ProjectFileState>.Empty,
                         ImmutableDictionary<Guid, FileViewState>.Empty),
-                //ProjectCompiledAction compiled => state,
-                //ICodeWindowAction codeWindowAction => new AppState(state.Project, codeWindowReducer.Reduce(state.CodeWindow, codeWindowAction)),
+                ProjectCompiledAction _ => new AppState(state.Project, state.Files, state.FileViews),
                 _ => state
             };
         }
@@ -54,12 +55,57 @@ namespace AutoStep.Editor.Client.Store.App
                                 new Uri($"file://{openFileAction.FileId}"),
                                 state.Project.AllFiles[openFileAction.FileId],
                                 state.Project.AllFiles[openFileAction.FileId].ContentSource as ProjectFileSource,
-                                false);
+                                true,
+                                null,
+                                DateTime.MinValue);
 
             return new AppState(
                         state.Project,
                         state.Files.Add(openFileAction.FileId, fileState),
                         state.FileViews.Add(fileViewState.Id, fileViewState));
+        }
+
+        private AppState OpenFileComplete(AppState state, OpenFileCompleteAction action)
+        {
+            var fileState = state.Files[action.FileId];
+
+            var newFileState = new ProjectFileState(
+                                fileState.FileUri,
+                                fileState.File,
+                                fileState.Source,
+                                false,
+                                action.TextModel,
+                                DateTime.MinValue);
+
+            var files = state.Files.SetItem(action.FileId, newFileState);
+
+            return new AppState(
+                state.Project,
+                files,
+                state.FileViews
+            );
+        }
+
+        private AppState FileModelUpdate(AppState state, FileModelUpdateAction action)
+        {
+            var fileState = state.Files[action.FileId];
+
+            var newFileState = new ProjectFileState(
+                                fileState.FileUri,
+                                fileState.File,
+                                fileState.Source,
+                                false,
+                                fileState.TextModel,
+                                action.UpdatedTime
+                                );
+
+            var files = state.Files.SetItem(action.FileId, newFileState);
+
+            return new AppState(
+                state.Project,
+                files,
+                state.FileViews
+            );
         }
     }
 }
