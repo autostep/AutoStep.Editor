@@ -1,3 +1,7 @@
+>
+> This repo is 'frozen', in that no active development is taking place. It has been effectively superseded by the [VSCode Extension](https://github.com/autostep/AutoStep.VsCode).
+>
+
 # AutoStep.Editor
 
 This repository contains the Editor and User Interface for writing and managing AutoStep tests.
