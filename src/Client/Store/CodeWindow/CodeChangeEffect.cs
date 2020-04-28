@@ -30,7 +30,7 @@ namespace AutoStep.Editor.Client.Store.CodeWindow
             // Initiate compilation and linking.
             var projectCompiler = action.Project.Compiler;
 
-            await projectCompiler.Compile(logFactory);
+            await projectCompiler.CompileAsync(logFactory);
 
             projectCompiler.Link();
 
